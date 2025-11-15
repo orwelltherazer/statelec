@@ -1,6 +1,8 @@
-# Statelec
+ # Statelec
 
-Application web de monitoring de consommation électrique développée en PHP avec une architecture MVC moderne.
+ Application web de monitoring de consommation électrique développée en PHP avec une architecture MVC moderne.
+
+ ![Screenshot](screenshot.png)
 
 ## Fonctionnalités
 
@@ -70,11 +72,15 @@ BASE_PATH=/statelec
 
 ## Utilisation
 
-### Collecte de données
+ ### Collecte de données
 
-La collecte automatique des données se fait via les scripts cron :
-- `cron/acquire_data.php` : Récupération des données du compteur Linky via Thingspeak
-- `cron/alert_cron.php` : Vérification des seuils d'alerte
+ L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module transmet les données de consommation électrique vers la plateforme Thingspeak. L'application récupère ensuite ces données de manière cyclique via le script cron `acquire_data.php`.
+
+ Les détails de la réalisation du module de collecte des données seront ajoutés prochainement.
+
+ La collecte automatique des données se fait via les scripts cron :
+ - `cron/acquire_data.php` : Récupération des données du compteur Linky via Thingspeak
+ - `cron/alert_cron.php` : Vérification des seuils d'alerte
 
 ### API
 
