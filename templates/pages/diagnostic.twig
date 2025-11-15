@@ -246,9 +246,9 @@
                             <td class="px-4 py-2 font-mono text-xs">
                                 ${new Date(record.timestamp).toLocaleString('fr-FR')}
                             </td>
-                            <td class="px-4 py-2">${record.papp || '-'}</td>
-                            <td class="px-4 py-2">${record.hchc || '-'}</td>
-                            <td class="px-4 py-2">${record.hchp || '-'}</td>
+                            <td class="px-4 py-2">${record.papp ?? '-'}</td>
+                            <td class="px-4 py-2">${record.hchc ?? '-'}</td>
+                            <td class="px-4 py-2">${record.hchp ?? '-'}</td>
                             <td class="px-4 py-2">
                                 <span class="px-2 py-1 rounded text-xs ${
                                     record.ptec === '1'
@@ -257,7 +257,7 @@
                                         ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                                 }">
-                                    ${record.ptec === '1' ? 'HC' : record.ptec === '2' ? 'HP' : record.ptec || '-'}
+                                    ${record.ptec === '1' ? 'HC' : record.ptec === '2' ? 'HP' : record.ptec ?? '-'}
                                 </span>
                             </td>
                         `;
