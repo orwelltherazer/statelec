@@ -1,0 +1,95 @@
+{% extends "base.twig" %}
+
+{% block title %}Alertes - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="space-y-6">
+
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Historique des alertes</h2>
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                {% if alerts is empty %}
+                    <div class="text-center text-gray-500 py-8">Aucune alerte</div>
+                {% else %}
+                    {% for alert in alerts %}
+                        <div
+                            class="p-4 rounded-lg border-l-4
+                            {% if alert.severity == 'critical' %}bg-red-50 border-red-500
+                            {% elseif alert.severity == 'high' %}bg-orange-50 border-orange-500
+                            {% else %}bg-yellow-50 border-yellow-500{% endif %}"
+                        >
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="{% if alert.severity == 'critical' %}text-red-500
+                                    {% elseif alert.severity == 'high' %}text-orange-500
+                                    {% else %}text-yellow-500{% endif %}">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">{{ alert.message }}</div>
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        {{ alert.timestamp | date('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+        // Fonction générique pour soumettre les formulaires de paramètres
+        async function saveSettings(formId) {
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
+            const dataToSave = {};
+
+            for (let [key, value] of formData.entries()) {
+                // Convertir les valeurs numériques si possible
+                if (!isNaN(parseFloat(value)) && isFinite(value)) {
+                    dataToSave[key] = parseFloat(value);
+                } else {
+                    dataToSave[key] = value;
+                }
+            }
+
+            for (const key in dataToSave) {
+                if (Object.hasOwnProperty.call(dataToSave, key)) {
+                    try {
+                        const response = await fetch(`${basePath}api/settings/${key}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ value: dataToSave[key] }),
+                        });
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const result = await response.json();
+                        console.log(`Setting ${key} saved:`, result);
+                    } catch (error) {
+                        console.error(`Error saving setting ${key}:`, error);
+                        alert(`Erreur lors de l'enregistrement du paramètre ${key}.`);
+                        return; // Arrêter si une erreur survient
+                    }
+                }
+            }
+            alert('Seuils d\'alerte enregistrés avec succès !');
+        }
+
+
+    });
+</script>
+{% endblock %}

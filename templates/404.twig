@@ -1,0 +1,37 @@
+{% extends "base.twig" %}
+
+{% block title %}Page non trouvée - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-8 text-center">
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Page non trouvée
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    La page que vous cherchez n'existe pas ou a été déplacée.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <a href="{{ basePath }}" class="block w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium text-center">
+                    Retour à l'accueil
+                </a>
+            </div>
+
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+                <p>Référence: {{ "now"|date("Y-m-d H:i:s") }}</p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

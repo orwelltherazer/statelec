@@ -1,0 +1,467 @@
+{% extends "base.twig" %}
+
+{% block title %}Paramètres - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-6">Configuration générale</h2>
+            <form id="general-settings-form" class="space-y-4">
+                <div>
+                    <label for="prixHC" class="block text-sm font-medium mb-2">Prix kWh Heures Creuses (€)</label>
+                    <input
+                        type="number"
+                        step="0.0001"
+                        id="prixHC"
+                        name="prixHC"
+                        value="{{ settings.prixHC | default(0.1821) }}"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+
+                <div>
+                    <label for="prixHP" class="block text-sm font-medium mb-2">Prix kWh Heures Pleines (€)</label>
+                    <input
+                        type="number"
+                        step="0.0001"
+                        id="prixHP"
+                        name="prixHP"
+                        value="{{ settings.prixHP | default(0.2460) }}"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+
+                <div>
+                    <label for="budgetMensuel" class="block text-sm font-medium mb-2">Budget mensuel (€)</label>
+                    <input
+                        type="number"
+                        id="budgetMensuel"
+                        name="budgetMensuel"
+                        value="{{ settings.budgetMensuel | default(0) }}"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+
+                 <div>
+                     <label for="apiUrl" class="block text-sm font-medium mb-2">URL de l'API</label>
+                     <input
+                         type="text"
+                         id="apiUrl"
+                         name="apiUrl"
+                         value="{{ settings.apiUrl | default('') }}"
+                         placeholder="https://api.exemple.com"
+                         class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                     />
+                     <p class="text-sm text-gray-500 mt-1">
+                         URL de l'API externe pour les données de consommation (optionnel)
+                     </p>
+                 </div>
+
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div>
+                         <label for="fieldPapp" class="block text-sm font-medium mb-2">Champ Puissance (field)</label>
+                         <input
+                             type="text"
+                             id="fieldPapp"
+                             name="fieldPapp"
+                             value="{{ settings.fieldPapp | default('field1') }}"
+                             placeholder="field1"
+                             class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                         />
+                         <p class="text-sm text-gray-500 mt-1">
+                             Nom du champ API pour la puissance apparente
+                         </p>
+                     </div>
+
+                     <div>
+                         <label for="fieldIinst" class="block text-sm font-medium mb-2">Champ Intensité (field)</label>
+                         <input
+                             type="text"
+                             id="fieldIinst"
+                             name="fieldIinst"
+                             value="{{ settings.fieldIinst | default('field4') }}"
+                             placeholder="field4"
+                             class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                         />
+                         <p class="text-sm text-gray-500 mt-1">
+                             Nom du champ API pour l'intensité
+                         </p>
+                     </div>
+
+                     <div>
+                         <label for="fieldPtec" class="block text-sm font-medium mb-2">Champ Période (field)</label>
+                         <input
+                             type="text"
+                             id="fieldPtec"
+                             name="fieldPtec"
+                             value="{{ settings.fieldPtec | default('field7') }}"
+                             placeholder="field7"
+                             class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                         />
+                         <p class="text-sm text-gray-500 mt-1">
+                             Nom du champ API pour la période tarifaire
+                         </p>
+                     </div>
+                 </div>
+
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                         <label for="fieldHchc" class="block text-sm font-medium mb-2">Champ HC (field)</label>
+                         <input
+                             type="text"
+                             id="fieldHchc"
+                             name="fieldHchc"
+                             value="{{ settings.fieldHchc | default('field2') }}"
+                             placeholder="field2"
+                             class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                         />
+                         <p class="text-sm text-gray-500 mt-1">
+                             Nom du champ API pour l'index Heures Creuses
+                         </p>
+                     </div>
+
+                     <div>
+                         <label for="fieldHchp" class="block text-sm font-medium mb-2">Champ HP (field)</label>
+                         <input
+                             type="text"
+                             id="fieldHchp"
+                             name="fieldHchp"
+                             value="{{ settings.fieldHchp | default('field3') }}"
+                             placeholder="field3"
+                             class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                         />
+                         <p class="text-sm text-gray-500 mt-1">
+                             Nom du champ API pour l'index Heures Pleines
+                         </p>
+                     </div>
+                 </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition font-medium"
+                >
+                    Enregistrer les paramètres
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-6">Alerte consommation</h2>
+            <form id="alert-settings-form" class="space-y-6">
+                <div>
+                    <label class="flex items-center gap-2 mb-4">
+                        <input
+                            type="checkbox"
+                            id="email_alerts"
+                            name="email_alerts"
+                            value="true"
+                            {% if settings.email_alerts %}checked="checked"{% endif %}
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span class="text-sm font-medium">Activer les alertes par email</span>
+                    </label>
+                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                        Recevez des alertes automatiques par email en cas de dépassement de seuils
+                    </p>
+                </div>
+
+                <div id="alert-settings-content" class="space-y-6 {% if not settings.email_alerts %}opacity-50 pointer-events-none{% endif %}">
+                    <div>
+                        <h3 class="text-md font-medium mb-3 text-gray-700 dark:text-gray-300">Seuils d'alerte</h3>
+                        <div class="space-y-4 pl-4 border-l-2 border-gray-200 dark:border-gray-600">
+                            <div>
+                                <label for="seuilPuissance" class="block text-sm font-medium mb-2">Seuil de puissance (W)</label>
+                                <input
+                                    type="number"
+                                    id="seuilPuissance"
+                                    name="seuilPuissance"
+                                    value="{{ settings.seuilPuissance | default(0) }}"
+                                    class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                />
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Alerte déclenchée si la puissance dépasse ce seuil
+                                </p>
+                            </div>
+
+                            <div>
+                                <label for="seuilJournalier" class="block text-sm font-medium mb-2">Seuil journalier (kWh)</label>
+                                <input
+                                    type="number"
+                                    id="seuilJournalier"
+                                    name="seuilJournalier"
+                                    value="{{ settings.seuilJournalier | default(0) }}"
+                                    class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                />
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Alerte si la consommation journalière dépasse ce seuil
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-md font-medium mb-3 text-gray-700 dark:text-gray-300">Configuration des alertes email</h3>
+                        <div class="space-y-4 pl-4 border-l-2 border-gray-200 dark:border-gray-600">
+                            <div>
+                                <label for="email_destinataire" class="block text-sm font-medium mb-2">Email destinataire</label>
+                                <input
+                                    type="email"
+                                    id="email_destinataire"
+                                    name="email_destinataire"
+                                    value="{{ settings.email_destinataire | default('') }}"
+                                    placeholder="votre.email@exemple.com"
+                                    class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                />
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Adresse email où recevoir les alertes (doit être configurée pour le cron)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-medium"
+                >
+                    Enregistrer les alertes
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">À propos</h2>
+            <div class="space-y-2 text-sm text-gray-500">
+                <p><strong>Version:</strong> 1.0.0</p>
+                <p><strong>Dernière mise à jour:</strong> Novembre 2025</p>
+                <p><strong>Développé avec:</strong> PHP + Twig + TailwindCSS + Chart.js</p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="{{ basePath }}css/modal.css">
+<script src="{{ basePath }}js/modal.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        
+        // Initialiser le système de modal
+        console.log('Initializing modal system...');
+        modalSystem = new ModalSystem();
+        console.log('Modal system initialized:', modalSystem);
+
+        // Validation des données
+        function validateSettings(data, formType) {
+            const errors = [];
+            const warnings = [];
+
+            // Validation pour les paramètres généraux
+            if (formType === 'general') {
+                if (data.prixHC !== undefined) {
+                    if (data.prixHC < 0 || data.prixHC > 2) {
+                        errors.push('Le prix HC doit être entre 0€ et 2€');
+                    }
+                }
+                if (data.prixHP !== undefined) {
+                    if (data.prixHP < 0 || data.prixHP > 2) {
+                        errors.push('Le prix HP doit être entre 0€ et 2€');
+                    }
+                }
+                if (data.budgetMensuel !== undefined) {
+                    if (data.budgetMensuel < 0 || data.budgetMensuel > 1000) {
+                        errors.push('Le budget mensuel doit être entre 0€ et 1000€');
+                    }
+                }
+                if (data.apiUrl !== undefined && data.apiUrl) {
+                    try {
+                        new URL(data.apiUrl);
+                    } catch {
+                        errors.push('L\'URL de l\'API n\'est pas valide');
+                    }
+                }
+            }
+
+            // Validation pour les alertes
+            if (formType === 'alerts') {
+                if (data.email_alerts && !data.email_destinataire) {
+                    errors.push('L\'adresse email destinataire est obligatoire si les alertes sont activées');
+                }
+                if (data.email_destinataire) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(data.email_destinataire)) {
+                        errors.push('L\'adresse email n\'est pas valide');
+                    }
+                }
+                if (data.seuilPuissance !== undefined && data.seuilPuissance < 0) {
+                    errors.push('Le seuil de puissance doit être positif');
+                }
+                if (data.seuilJournalier !== undefined && data.seuilJournalier < 0) {
+                    errors.push('Le seuil journalier doit être positif');
+                }
+                if (data.seuilPuissance > 0 && data.seuilPuissance < 100) {
+                    warnings.push('Le seuil de puissance semble très bas (moins de 100W)');
+                }
+                if (data.seuilJournalier > 0 && data.seuilJournalier > 100) {
+                    warnings.push('Le seuil journalier semble très élevé (plus de 100kWh)');
+                }
+            }
+
+            return { errors, warnings };
+        }
+
+        // Fonction améliorée pour sauvegarder les paramètres
+        async function saveSettings(formId) {
+            console.log('saveSettings called with formId:', formId);
+            
+            const form = document.getElementById(formId);
+            if (!form) {
+                console.error('Form not found:', formId);
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const dataToSave = {};
+            const formType = formId === 'general-settings-form' ? 'general' : 'alerts';
+            
+            console.log('Form type:', formType);
+
+            // Récupérer et valider les données
+            for (let [key, value] of formData.entries()) {
+                if (key === 'email_alerts') {
+                    dataToSave[key] = value === 'true';
+                } else if (!isNaN(parseFloat(value)) && isFinite(value)) {
+                    dataToSave[key] = parseFloat(value);
+                } else {
+                    dataToSave[key] = value;
+                }
+            }
+
+            // Validation
+            const validation = validateSettings(dataToSave, formType);
+            
+            if (validation.errors.length > 0) {
+                modalSystem.error(
+                    'Erreur de validation',
+                    'Certains paramètres ne sont pas valides',
+                    { 'Erreurs': validation.errors.join(', ') }
+                );
+                return;
+            }
+
+            // Afficher les avertissements s'il y en a
+            if (validation.warnings.length > 0) {
+                const warningMessage = 'Avertissements :\n' + validation.warnings.join('\n') + '\n\nContinuer l\'enregistrement ?';
+                const proceed = confirm(warningMessage);
+                if (!proceed) return;
+            }
+
+            // Sauvegarder chaque paramètre
+            const results = {};
+            let hasError = false;
+
+            for (const [key, value] of Object.entries(dataToSave)) {
+                try {
+                    const response = await fetch(`${basePath}api/settings/${key}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ value: value }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    results[key] = { success: true, value: value };
+                    console.log(`Setting ${key} saved:`, result);
+
+                } catch (error) {
+                    console.error(`Error saving setting ${key}:`, error);
+                    results[key] = { success: false, error: error.message };
+                    hasError = true;
+                }
+            }
+
+            // Afficher le résultat
+            if (hasError) {
+                const failedSettings = Object.entries(results)
+                    .filter(([_, result]) => !result.success)
+                    .map(([key, _]) => key);
+                
+                modalSystem.error(
+                    'Erreur partielle',
+                    `${failedSettings.length} paramètre(s) n'ont pas pu être enregistrés`,
+                    { 'Paramètres en erreur': failedSettings.join(', ') }
+                );
+            } else {
+                const successCount = Object.keys(results).length;
+                const details = {};
+                for (const [key, result] of Object.entries(results)) {
+                    let displayValue = result.value;
+                    if (typeof displayValue === 'number') {
+                        displayValue = displayValue.toFixed(4);
+                    }
+                    details[key] = displayValue;
+                }
+
+                modalSystem.success(
+                    'Enregistrement réussi',
+                    `${successCount} paramètre(s) enregistré(s) avec succès`,
+                    details
+                );
+            }
+
+
+        }
+
+        // Écouteurs d'événements pour les formulaires
+        // Gérer les soumissions de formulaires
+        const generalSettingsForm = document.getElementById('general-settings-form');
+        if (generalSettingsForm) {
+            generalSettingsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                console.log('General settings form submitted');
+                saveSettings('general-settings-form');
+            });
+        }
+
+        const alertSettingsForm = document.getElementById('alert-settings-form');
+        if (alertSettingsForm) {
+            alertSettingsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                console.log('Alert settings form submitted');
+                saveSettings('alert-settings-form');
+            });
+        }
+
+
+
+        // Gérer l'activation/désactivation de tous les champs d'alerte
+        const emailAlertsCheckbox = document.getElementById('email_alerts');
+        const alertSettingsContent = document.getElementById('alert-settings-content');
+        
+        if (emailAlertsCheckbox && alertSettingsContent) {
+            function toggleAlertSettings() {
+                if (emailAlertsCheckbox.checked) {
+                    alertSettingsContent.classList.remove('opacity-50', 'pointer-events-none');
+                } else {
+                    alertSettingsContent.classList.add('opacity-50', 'pointer-events-none');
+                }
+            }
+            
+            // Initialiser l'état
+            toggleAlertSettings();
+            
+            // Écouter les changements
+            emailAlertsCheckbox.addEventListener('change', toggleAlertSettings);
+        }
+    });
+</script>
+{% endblock %}

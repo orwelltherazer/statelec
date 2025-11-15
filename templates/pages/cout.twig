@@ -1,0 +1,600 @@
+{% extends "base.twig" %}
+
+{% block title %}Coûts - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h2 class="text-xl font-semibold">Analyse des coûts</h2>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <div class="flex gap-2">
+                    <button
+                        id="periode-mois"
+                        class="px-4 py-2 rounded-lg transition bg-blue-500 text-white"
+                        data-periode="mois"
+                    >
+                        Mois
+                    </button>
+                    <button
+                        id="periode-periode"
+                        class="px-4 py-2 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
+                        data-periode="periode"
+                    >
+                        Période
+                    </button>
+                </div>
+
+                <div id="month-navigation" class="flex items-center gap-3">
+                    <button
+                        id="prev-month"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <span id="selected-month-display" class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                        {# Month will be set by JS #}
+                    </span>
+
+                    <button
+                        id="next-month"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="date-range-selection" class="flex gap-2 items-center hidden">
+                    <input
+                        type="date"
+                        id="start-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                    <span class="text-gray-500">au</span>
+                    <input
+                        type="date"
+                        id="end-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Heures Creuses</div>
+                <div id="cout-hc" class="text-3xl font-bold text-blue-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-hc-display">0.00 €/kWh</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Heures Pleines</div>
+                <div id="cout-hp" class="text-3xl font-bold text-orange-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-hp-display">0.00 €/kWh</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Total</div>
+                <div id="cout-total" class="text-3xl font-bold text-green-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="periode-display"></div>
+            </div>
+        </div>
+
+        <div id="loading-indicator" class="flex justify-center items-center h-64 hidden">
+            <div class="text-lg">Chargement des données...</div>
+        </div>
+
+        <div id="chart-section">
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Coûts par heure/jour</h2>
+                <div style="width: 100%; height: 400px;">
+                    <canvas id="costBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Répartition HC/HP</h2>
+                <div style="width: 100%; height: 300px;">
+                    <canvas id="hchpCostPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Suivi budgétaire</h2>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span>Budget mensuel</span>
+                        <span id="budget-mensuel" class="font-bold">0.00 €</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div
+                            id="budget-progress"
+                            class="h-full transition-all"
+                            style="width: 0%;"
+                        ></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-gray-500">
+                        <span>Consommé: <span id="consumed-cost">0.00 €</span></span>
+                        <span>Restant: <span id="remaining-budget">0.00 €</span></span>
+                    </div>
+                </div>
+
+                <div id="budget-status" class="p-4 rounded-lg">
+                    <div class="font-semibold"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const config = {{ config | json_encode | raw }};
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+        let periode = 'mois'; // 'mois' or 'periode'
+        let selectedMonth = new Date();
+        let dateRange = {
+            start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+            end: new Date().toISOString().split('T')[0]
+        };
+        
+        // Budget data for current month (calculated once)
+        let currentMonthBudgetData = null;
+
+        const periodeMoisBtn = document.getElementById('periode-mois');
+        const periodePeriodeBtn = document.getElementById('periode-periode');
+        const monthNavigation = document.getElementById('month-navigation');
+        const dateRangeSelection = document.getElementById('date-range-selection');
+        const selectedMonthDisplay = document.getElementById('selected-month-display');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const chartSection = document.getElementById('chart-section');
+
+        // Chart instances
+        let costBarChart, hchpCostPieChart;
+
+        function updatePeriodeButtons() {
+            [periodeMoisBtn, periodePeriodeBtn].forEach(btn => {
+                if (btn.dataset.periode === periode) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-700', 'text-gray-300', 'bg-gray-100', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add(theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100', theme === 'dark' ? 'text-gray-300' : 'text-gray-700');
+                }
+            });
+
+            if (periode === 'mois') {
+                monthNavigation.classList.remove('hidden');
+                dateRangeSelection.classList.add('hidden');
+            } else if (periode === 'periode') {
+                monthNavigation.classList.add('hidden');
+                dateRangeSelection.classList.remove('hidden');
+                startDateInput.value = dateRange.start;
+                endDateInput.value = dateRange.end;
+            }
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function displaySelectedMonth() {
+            const firstDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+            const lastDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+            
+            selectedMonthDisplay.textContent = `Du ${firstDay.toLocaleDateString('fr-FR')} au ${lastDay.toLocaleDateString('fr-FR')}`;
+        }
+
+        async function loadData() {
+            loadingIndicator.classList.remove('hidden');
+            chartSection.classList.add('hidden');
+
+            let url = '';
+            if (periode === 'mois') {
+                const firstDayOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+                const lastDayOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+                dateRange.start = formatDate(firstDayOfMonth);
+                dateRange.end = formatDate(lastDayOfMonth);
+                url = `${basePath}api/consumption?start=${dateRange.start}&end=${dateRange.end}`;
+            } else { // periode === 'periode'
+                url = `${basePath}api/consumption?start=${dateRange.start}&end=${dateRange.end}`;
+            }
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}, response: ${errorText}`);
+                }
+                const data = await response.json();
+                processChartData(data);
+            } catch (error) {
+                console.error('Erreur de chargement des données:', error);
+                alert('Erreur lors du chargement des données historiques: ' + error.message); // Display more specific error
+                updateCharts([], 0, 0); // Clear charts on error
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                chartSection.classList.remove('hidden');
+            }
+        }
+
+        function processChartData(data) {
+            if (!data || data.length === 0) {
+                updateCharts([], 0, 0);
+                updateStats(0, 0, 0, 0);
+                return;
+            }
+
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            let processedData = [];
+            let totalCostHC = 0;
+            let totalCostHP = 0;
+
+            const prixHC = parseFloat(config?.prixHC || 0.1821);
+            const prixHP = parseFloat(config?.prixHP || 0.2460);
+
+            if (periode === 'mois') { // Daily aggregation for the month
+                const dailyAggregates = {};
+                let firstRecordOfDay = {};
+
+                for (const d of sortedData) {
+                    const date = formatDate(new Date(d.timestamp));
+                    if (!firstRecordOfDay[date]) {
+                        firstRecordOfDay[date] = d;
+                    }
+                    dailyAggregates[date] = d; // Keep the last record of the day
+                }
+
+                for (const date in dailyAggregates) {
+                    const first = firstRecordOfDay[date];
+                    const last = dailyAggregates[date];
+
+                    const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
+                    const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+
+                    const costHC = consoHC * prixHC;
+                    const costHP = consoHP * prixHP;
+
+                    processedData.push({
+                        label: new Date(date).toLocaleDateString('fr-FR', { day: '2-digit' }), // Day of month
+                        coutHC: costHC,
+                        coutHP: costHP,
+                        coutTotal: costHC + costHP,
+                        date: new Date(date) // Add full date for proper sorting
+                    });
+                    totalCostHC += costHC;
+                    totalCostHP += costHP;
+                }
+                processedData.sort((a, b) => a.date - b.date); // Sort by date in chronological order
+            } else { // periode === 'periode' (daily aggregation for custom range)
+                const dailyAggregates = {};
+                let firstRecordOfDay = {};
+
+                for (const d of sortedData) {
+                    const date = formatDate(new Date(d.timestamp));
+                    if (!firstRecordOfDay[date]) {
+                        firstRecordOfDay[date] = d;
+                    }
+                    dailyAggregates[date] = d; // Keep the last record of the day
+                }
+
+                for (const date in dailyAggregates) {
+                    const first = firstRecordOfDay[date];
+                    const last = dailyAggregates[date];
+
+                    const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
+                    const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+
+                    const costHC = consoHC * prixHC;
+                    const costHP = consoHP * prixHP;
+
+                    processedData.push({
+                        label: new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
+                        coutHC: costHC,
+                        coutHP: costHP,
+                        coutTotal: costHC + costHP
+                    });
+                    totalCostHC += costHC;
+                    totalCostHP += costHP;
+                }
+                processedData.sort((a, b) => new Date(a.label) - new Date(b.label));
+            }
+
+            updateCharts(processedData, totalCostHC, totalCostHP);
+            updateStats(totalCostHC, totalCostHP, totalCostHC + totalCostHP, parseFloat(config?.budgetMensuel || 0));
+        }
+
+        function updateCharts(processedData, totalCostHC, totalCostHP) {
+            let labels = processedData.map(d => d.label);
+            let coutHCData = processedData.map(d => d.coutHC);
+            let coutHPData = processedData.map(d => d.coutHP);
+            
+            // Adapt labels for long periods (max 40 divisions)
+            if (labels.length > 40) {
+                const step = Math.ceil(labels.length / 40);
+                const adaptedLabels = [];
+                const adaptedHCData = [];
+                const adaptedHPData = [];
+                
+                for (let i = 0; i < labels.length; i += step) {
+                    adaptedLabels.push(labels[i]);
+                    adaptedHCData.push(coutHCData[i]);
+                    adaptedHPData.push(coutHPData[i]);
+                }
+                
+                labels = adaptedLabels;
+                coutHCData = adaptedHCData;
+                coutHPData = adaptedHPData;
+            }
+
+            // Destroy existing charts if they exist
+            if (costBarChart) costBarChart.destroy();
+            if (hchpCostPieChart) hchpCostPieChart.destroy();
+
+            // Cost Bar Chart
+            const ctxBar = document.getElementById('costBarChart').getContext('2d');
+            costBarChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Coût HC (€)',
+                            data: coutHCData,
+                            backgroundColor: '#3b82f6', // blue-500
+                        },
+                        {
+                            label: 'Coût HP (€)',
+                            data: coutHPData,
+                            backgroundColor: '#f97316', // orange-500
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2) + ' €';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // HC/HP Cost Pie Chart
+            const ctxPie = document.getElementById('hchpCostPieChart').getContext('2d');
+            hchpCostPieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Heures Creuses', 'Heures Pleines'],
+                    datasets: [{
+                        data: [totalCostHC, totalCostHP],
+                        backgroundColor: ['#3b82f6', '#f97316'], // blue-500, orange-500
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: theme === 'dark' ? '#e5e7eb' : '#374151'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(2) + ' €';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateStats(coutHC, coutHP, coutTotal, budgetMensuel) {
+            document.getElementById('cout-hc').textContent = `${coutHC.toFixed(2)} €`;
+            document.getElementById('cout-hp').textContent = `${coutHP.toFixed(2)} €`;
+            document.getElementById('cout-total').textContent = `${coutTotal.toFixed(2)} €`;
+            document.getElementById('periode-display').textContent = `Du ${new Date(dateRange.start).toLocaleDateString('fr-FR')} au ${new Date(dateRange.end).toLocaleDateString('fr-FR')}`;
+        }
+
+        async function loadBudgetData() {
+            // Only load budget data once
+            if (currentMonthBudgetData !== null) return;
+            
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const currentMonthStart = formatDate(firstDayOfMonth);
+            // Include today's data by setting end to tomorrow to get all of today's records
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const currentMonthEnd = formatDate(tomorrow);
+            
+            console.log('Budget period:', currentMonthStart, 'to', currentMonthEnd);
+            
+            try {
+                const budgetResponse = await fetch(`${basePath}api/consumption?start=${currentMonthStart}&end=${currentMonthEnd}`);
+                if (budgetResponse.ok) {
+                    const budgetData = await budgetResponse.json();
+                    currentMonthBudgetData = calculateMonthCost(budgetData);
+                    updateBudgetDisplay();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des données budgétaires:', error);
+                currentMonthBudgetData = 0;
+                updateBudgetDisplay();
+            }
+        }
+
+        function updateBudgetDisplay() {
+            const budgetMensuel = parseFloat(config?.budgetMensuel || 0);
+            const monthCost = currentMonthBudgetData || 0;
+            
+            document.getElementById('budget-mensuel').textContent = `${budgetMensuel.toFixed(2)} €`;
+            document.getElementById('consumed-cost').textContent = `${monthCost.toFixed(2)} €`;
+            const budgetRestant = budgetMensuel - monthCost;
+            document.getElementById('remaining-budget').textContent = `${budgetRestant.toFixed(2)} €`;
+
+            const budgetProgress = document.getElementById('budget-progress');
+            const progressPercent = Math.min((monthCost / budgetMensuel) * 100, 100);
+            budgetProgress.style.width = `${progressPercent}%`;
+            budgetProgress.classList.remove('bg-red-500', 'bg-green-500');
+            budgetProgress.classList.add(progressPercent > 90 ? 'bg-red-500' : 'bg-green-500');
+
+            const budgetStatus = document.getElementById('budget-status');
+            budgetStatus.classList.remove('bg-green-50', 'bg-red-50');
+            budgetStatus.classList.add(budgetRestant > 0 ? 'bg-green-50' : 'bg-red-50');
+            budgetStatus.querySelector('div').classList.remove('text-green-800', 'text-red-800');
+            budgetStatus.querySelector('div').classList.add(budgetRestant > 0 ? 'text-green-800' : 'text-red-800');
+            budgetStatus.querySelector('div').textContent = budgetRestant > 0
+                ? `Budget respecté - Reste ${budgetRestant.toFixed(2)}€`
+                : `Budget dépassé de ${Math.abs(budgetRestant).toFixed(2)}€`;
+        }
+
+        function calculateMonthCost(data) {
+            if (!data || data.length === 0) return 0;
+            
+            console.log('Budget data received:', data.length, 'records');
+            
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const dailyAggregates = {};
+            let firstRecordOfDay = {};
+
+            // Group data by day and track first/last records
+            for (const d of sortedData) {
+                const date = formatDate(new Date(d.timestamp));
+                if (!firstRecordOfDay[date]) {
+                    firstRecordOfDay[date] = d;
+                }
+                dailyAggregates[date] = d; // Keep the last record of the day
+            }
+
+            let totalCost = 0;
+            const prixHC = parseFloat(config?.prixHC || 0.1821);
+            const prixHP = parseFloat(config?.prixHP || 0.2460);
+
+            console.log('Daily aggregates found:', Object.keys(dailyAggregates).length, 'days');
+
+            for (const date in dailyAggregates) {
+                const first = firstRecordOfDay[date];
+                const last = dailyAggregates[date];
+
+                const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
+                const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+
+                const costHC = consoHC * prixHC;
+                const costHP = consoHP * prixHP;
+                const dayCost = costHC + costHP;
+
+                totalCost += dayCost;
+                
+                console.log(`Date ${date}: HC=${consoHC.toFixed(2)}kWh, HP=${consoHP.toFixed(2)}kWh, Cost=${dayCost.toFixed(2)}€`);
+            }
+
+            console.log('Total month cost:', totalCost.toFixed(2), '€');
+            return totalCost;
+        }
+
+        // Event Listeners
+        periodeMoisBtn.addEventListener('click', () => {
+            periode = 'mois';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        periodePeriodeBtn.addEventListener('click', () => {
+            periode = 'periode';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            selectedMonth.setMonth(selectedMonth.getMonth() - 1);
+            displaySelectedMonth();
+            loadData();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            selectedMonth.setMonth(selectedMonth.getMonth() + 1);
+            displaySelectedMonth();
+            loadData();
+        });
+
+        startDateInput.addEventListener('change', () => {
+            dateRange.start = startDateInput.value;
+            loadData();
+        });
+
+        endDateInput.addEventListener('change', () => {
+            dateRange.end = endDateInput.value;
+            loadData();
+        });
+
+        // Initial load
+        updatePeriodeButtons();
+        displaySelectedMonth();
+        loadData();
+        loadBudgetData(); // Load budget data separately
+    });
+</script>
+{% endblock %}

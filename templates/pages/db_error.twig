@@ -1,0 +1,74 @@
+{% extends "base.twig" %}
+
+{% block title %}Erreur de connexion - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-8 text-center">
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Mode dégradé
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    L'application fonctionne en mode dégradé suite à des problèmes techniques.
+                </p>
+            </div>
+
+            <div class="mb-6 text-left">
+                <h2 class="text-lg font-semibold mb-4">Que s'est-il passé ?</h2>
+                <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 mt-0.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <div class="flex-1">
+                            <p class="font-medium text-red-800 dark:text-red-200">
+                                Impossible de se connecter à la base de données
+                            </p>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-1">
+                                Vérifiez que le serveur MySQL est démarré et accessible.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 text-left">
+                <h2 class="text-lg font-semibold mb-4">Fonctionnalités limitées</h2>
+                <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <ul class="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+                        <li>• Les données de consommation ne sont pas disponibles</li>
+                        <li>• Les paramètres ne peuvent pas être modifiés</li>
+                        <li>• Les alertes sont désactivées</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="location.reload()" class="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium">
+                    Réessayer
+                </button>
+                
+                <a href="{{ basePath }}" class="block w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition font-medium text-center">
+                    Retour à l'accueil
+                </a>
+            </div>
+
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+                <p>Si le problème persiste, contactez l'administrateur système.</p>
+                <p class="mt-2">Référence: {{ "now"|date("Y-m-d H:i:s") }}</p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

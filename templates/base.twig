@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Statelec{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Configuration pour inclure toutes les variantes dark
+      tailwind.config = {
+        darkMode: 'class',
+        content: ['*'], // Scanner tout
+        safelist: [
+          // Liste de toutes les classes dark utilisées
+          'dark:bg-gray-900',
+          'dark:text-gray-100',
+          'dark:bg-gray-800',
+          'dark:text-gray-400',
+          'dark:text-gray-300',
+          'dark:bg-gray-700',
+          'dark:border-gray-700',
+          'dark:border-gray-800',
+          'dark:hover:bg-gray-700',
+          'dark:hover:bg-gray-600',
+          'dark:text-gray-500',
+          'dark:bg-red-900/20',
+          'dark:border-red-800',
+          'dark:text-red-400',
+          'dark:bg-yellow-900/20',
+          'dark:border-yellow-800',
+          'dark:text-yellow-300',
+          'dark:bg-gray-100',
+          'dark:text-gray-900',
+          'dark:bg-gray-200',
+          'dark:text-gray-700'
+        ]
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+    {% include 'components/navigation.twig' %}
+
+    <div id="app-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

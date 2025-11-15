@@ -1,0 +1,591 @@
+{% extends "base.twig" %}
+
+{% block title %}Analyse - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <h2 class="text-xl font-semibold">Analyse de consommation</h2>
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <div class="flex gap-2">
+                        <button
+                            id="periode-mois"
+                            class="px-4 py-2 rounded-lg transition bg-blue-500 text-white"
+                            data-periode="mois"
+                        >
+                            Mois
+                        </button>
+                        <button
+                            id="periode-periode"
+                            class="px-4 py-2 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
+                            data-periode="periode"
+                        >
+                            Période
+                        </button>
+                    </div>
+
+                    <div id="month-navigation" class="flex items-center gap-3">
+                        <button
+                            id="prev-month"
+                            class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <span id="selected-month-display" class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                            {# Month will be set by JS #}
+                        </span>
+
+                        <button
+                            id="next-month"
+                            class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="date-range-selection" class="flex gap-2 items-center hidden">
+                        <input
+                            type="date"
+                            id="start-date"
+                            class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <span class="text-gray-500">au</span>
+                        <input
+                            type="date"
+                            id="end-date"
+                            class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span class="text-sm">Puissance moyenne</span>
+                    </div>
+                    <div id="avg-power" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0 W</div>
+                </div>
+
+                <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                    <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <span class="text-sm">Puissance P90</span>
+                    </div>
+                    <div id="max-power" class="text-2xl font-bold text-orange-600 dark:text-orange-400">0 W</div>
+                </div>
+
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span class="text-sm">Consommation totale</span>
+                    </div>
+                    <div id="total-consumption" class="text-2xl font-bold text-green-600 dark:text-green-400">0 kWh</div>
+                </div>
+
+                <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        <span class="text-sm">Points analysés</span>
+                    </div>
+                    <div id="total-points" class="text-2xl font-bold text-purple-600 dark:text-purple-400">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Profil de consommation horaire</h2>
+            <div class="text-sm text-gray-500 mb-2">
+                Moyenne : puissance moyenne | P90 : puissance dépassée seulement 10% du temps (plus représentative que le max)
+            </div>
+            <div style="width: 100%; height: 300px;">
+                <canvas id="hourlyProfileChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    Périodes de pointe
+                </h3>
+                <div id="peak-hours" class="text-3xl font-bold text-orange-500">N/A</div>
+                <div class="text-sm text-gray-500 mt-2">
+                    Heures avec la consommation la plus élevée
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Périodes creuses
+                </h3>
+                <div id="off-peak-hours" class="text-3xl font-bold text-blue-500">N/A</div>
+                <div class="text-sm text-gray-500 mt-2">
+                    Heures avec la consommation la plus faible
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Tendances</h2>
+            <div class="space-y-4">
+                <div id="trend-variation" class="flex items-center justify-between p-4 rounded-lg">
+                    <div>
+                        <div class="font-semibold flex items-center gap-2">
+                            <span id="trend-icon"></span>
+                            <span id="trend-text"></span>
+                        </div>
+                        <div id="trend-value" class="text-sm mt-1"></div>
+                    </div>
+                </div>
+
+                <div id="optimisation-hc" class="flex items-center justify-between p-4 rounded-lg">
+                    <div>
+                        <div class="font-semibold flex items-center gap-2">
+                            <span id="optimisation-icon"></span>
+                            <span id="optimisation-text"></span>
+                        </div>
+                        <div id="optimisation-value" class="text-sm mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const config = {{ config | json_encode | raw }} || {};
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+        let periode = 'mois'; // 'mois' or 'periode'
+        let selectedMonth = new Date();
+        let dateRange = {
+            start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+            end: new Date().toISOString().split('T')[0]
+        };
+
+        const periodeMoisBtn = document.getElementById('periode-mois');
+        const periodePeriodeBtn = document.getElementById('periode-periode');
+        const monthNavigation = document.getElementById('month-navigation');
+        const dateRangeSelection = document.getElementById('date-range-selection');
+        const selectedMonthDisplay = document.getElementById('selected-month-display');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+
+        // Chart instances
+        let hourlyProfileChart;
+
+        function updatePeriodeButtons() {
+            [periodeMoisBtn, periodePeriodeBtn].forEach(btn => {
+                if (btn.dataset.periode === periode) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-700', 'text-gray-300', 'bg-gray-100', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add(theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100', theme === 'dark' ? 'text-gray-300' : 'text-gray-700');
+                }
+            });
+
+            if (periode === 'mois') {
+                monthNavigation.classList.remove('hidden');
+                dateRangeSelection.classList.add('hidden');
+            } else if (periode === 'periode') {
+                monthNavigation.classList.add('hidden');
+                dateRangeSelection.classList.remove('hidden');
+                startDateInput.value = dateRange.start;
+                endDateInput.value = dateRange.end;
+            }
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function displaySelectedMonth() {
+            const firstDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+            const lastDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+            
+            selectedMonthDisplay.textContent = `Du ${firstDay.toLocaleDateString('fr-FR')} au ${lastDay.toLocaleDateString('fr-FR')}`;
+        }
+
+        async function loadData() {
+            console.log('Loading analysis data for period:', periode);
+            
+            let url = '';
+            
+            if (periode === 'mois') {
+                const firstDayOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+                const lastDayOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+                dateRange.start = formatDate(firstDayOfMonth);
+                dateRange.end = formatDate(lastDayOfMonth);
+                url = `${basePath}api/consumption?start=${dateRange.start}&end=${dateRange.end}`;
+            } else { // periode === 'periode'
+                url = `${basePath}api/consumption?start=${dateRange.start}&end=${dateRange.end}`;
+            }
+            
+            console.log('Fetching URL:', url);
+
+            try {
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Data received:', data.length, 'records');
+                await analyserDonnees(data);
+            } catch (error) {
+                console.error('Erreur de chargement des données:', error);
+                alert('Erreur lors du chargement des données d\'analyse: ' + error.message);
+                updateUI({
+                    profilHoraire: [],
+                    tendances: { variation: 0, optimisationHC: 0 },
+                    statistiques: { puissanceMoyenne: 0, puissanceMax: 0, totalPoints: 0, consoTotale: 0 },
+                    periodesPointe: { pointe: [], creuse: [] }
+                });
+            }
+        }
+
+        async function analyserDonnees(data) {
+            console.log('Analyser données appelé avec:', data.length, 'enregistrements');
+            
+            if (!data || data.length === 0) {
+                console.log('Pas de données, affichage vide');
+                updateUI({
+                    profilHoraire: [],
+                    tendances: { variation: 0, optimisationHC: 0 },
+                    statistiques: { puissanceMoyenne: 0, puissanceMax: 0, totalPoints: 0, consoTotale: 0 },
+                    periodesPointe: { pointe: [], creuse: [] }
+                });
+                return;
+            }
+
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Calculer le profil horaire moyen sur TOUTES les données
+            const profilHoraire = Array.from({ length: 24 }, (_, h) => {
+                const hourData = sortedData.filter(d => new Date(d.timestamp).getHours() === h);
+                const avg = hourData.length > 0
+                    ? hourData.reduce((sum, d) => sum + (parseInt(d.papp) || 0), 0) / hourData.length
+                    : 0;
+                
+                // Calculer le 90ème percentile (P90) au lieu du max pour plus de pertinence
+                let p90 = 0;
+                if (hourData.length > 0) {
+                    const powers = hourData.map(d => parseInt(d.papp) || 0).sort((a, b) => a - b);
+                    const p90Index = Math.floor(powers.length * 0.9);
+                    p90 = powers[p90Index] || 0;
+                }
+                
+                return {
+                    heure: `${h}h`,
+                    puissance: Math.round(avg),
+                    p90: Math.round(p90)
+                };
+            });
+
+            // Calculer les statistiques générales sur TOUTES les données
+            const puissances = sortedData.map(d => parseInt(d.papp) || 0);
+            const statistiques = {
+                puissanceMoyenne: Math.round(puissances.reduce((a, b) => a + b, 0) / puissances.length),
+                puissanceMax: Math.max(...puissances),
+                puissanceMin: Math.min(...puissances),
+                totalPoints: sortedData.length,
+                consoTotale: calculerConsommationTotale(sortedData)
+            };
+
+            // Identifier les périodes de pointe
+            const periodesPointe = identifierPeriodesPointe(profilHoraire);
+
+            // Calculer les tendances
+            const tendances = await calculerTendances(sortedData);
+
+            console.log('Appel updateUI avec:', {
+                profilHoraire: profilHoraire.length,
+                tendances,
+                statistiques,
+                periodesPointe
+            });
+            
+            updateUI({
+                profilHoraire,
+                tendances,
+                statistiques,
+                periodesPointe
+            });
+        }
+
+        function calculerConsommationTotale(data) {
+            if (data.length < 2) return 0;
+            
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const first = sortedData[0];
+            const last = sortedData[sortedData.length - 1];
+            
+            let hcConso = 0;
+            let hpConso = 0;
+            
+            if (first.hchc && last.hchc) {
+                hcConso = (parseFloat(last.hchc) - parseFloat(first.hchc));
+            }
+            if (first.hchp && last.hchp) {
+                hpConso = (parseFloat(last.hchp) - parseFloat(first.hchp));
+            }
+            
+            return Math.round((hcConso + hpConso) * 100) / 100;
+        }
+
+        function identifierPeriodesPointe(profilHoraire) {
+            const sortedByPuissance = [...profilHoraire].sort((a, b) => b.puissance - a.puissance);
+            const topHours = sortedByPuissance.slice(0, 3).map(h => parseInt(h.heure));
+            const bottomHours = sortedByPuissance.slice(-3).map(h => parseInt(h.heure));
+            
+            return {
+                pointe: topHours.sort((a, b) => a - b),
+                creuse: bottomHours.sort((a, b) => a - b)
+            };
+        }
+
+        async function calculerTendances(data) {
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Calculer l'optimisation HC (pertinent)
+            let totalHC = 0, totalHP = 0;
+            sortedData.forEach(d => {
+                if (parseInt(d.ptec) === 1) totalHC++;
+                else if (parseInt(d.ptec) === 2) totalHP++;
+            });
+            const optimisationHC = totalHC > 0 || totalHP > 0 ? (totalHC / (totalHC + totalHP)) * 100 : 0;
+
+            // Calculer la variation en comparant avec la période précédente
+            let variation = 0;
+            try {
+                const currentStart = dateRange.start;
+                const currentEnd = dateRange.end;
+                
+                // Calculer la durée de la période actuelle en jours
+                const daysDiff = Math.ceil((new Date(currentEnd) - new Date(currentStart)) / (1000 * 60 * 60 * 24));
+                
+                // Période précédente de même durée
+                const prevEnd = new Date(currentStart);
+                prevEnd.setDate(prevEnd.getDate() - 1);
+                const prevStart = new Date(prevEnd);
+                prevStart.setDate(prevStart.getDate() - daysDiff);
+                
+                const prevUrl = `${basePath}api/consumption?start=${formatDate(prevStart)}&end=${formatDate(prevEnd)}`;
+                const prevResponse = await fetch(prevUrl);
+                
+                if (prevResponse.ok) {
+                    const prevData = await prevResponse.json();
+                    
+                    if (prevData && prevData.length > 0 && data.length > 0) {
+                        // Calculer la puissance moyenne pour chaque période
+                        const currentAvg = data.reduce((sum, d) => sum + (parseInt(d.papp) || 0), 0) / data.length;
+                        const prevAvg = prevData.reduce((sum, d) => sum + (parseInt(d.papp) || 0), 0) / prevData.length;
+                        
+                        if (prevAvg > 0) {
+                            variation = ((currentAvg - prevAvg) / prevAvg) * 100;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Impossible de calculer la variation:', error);
+                variation = 0;
+            }
+
+            return {
+                variation: Math.round(variation * 10) / 10,
+                optimisationHC: Math.round(optimisationHC)
+            };
+        }
+
+        function updateUI(analyseData) {
+            // Update Stats Cards
+            document.getElementById('avg-power').textContent = `${analyseData.statistiques.puissanceMoyenne || 0} W`;
+            document.getElementById('max-power').textContent = `${analyseData.statistiques.puissanceMax || 0} W`;
+            document.getElementById('total-consumption').textContent = `${analyseData.statistiques.consoTotale || 0} kWh`;
+            document.getElementById('total-points').textContent = `${analyseData.statistiques.totalPoints || 0}`;
+
+            // Update Peak/Off-Peak Hours
+            document.getElementById('peak-hours').textContent = formatPeriodeHeures(analyseData.periodesPointe.pointe);
+            document.getElementById('off-peak-hours').textContent = formatPeriodeHeures(analyseData.periodesPointe.creuse);
+
+            // Update Trends
+            const trendVariationDiv = document.getElementById('trend-variation');
+            const trendIconSpan = document.getElementById('trend-icon');
+            const trendTextSpan = document.getElementById('trend-text');
+            const trendValueDiv = document.getElementById('trend-value');
+
+            trendVariationDiv.classList.remove('bg-green-50', 'bg-red-50', 'bg-gray-50');
+            trendIconSpan.innerHTML = '';
+            trendTextSpan.className = '';
+            trendValueDiv.className = 'text-sm mt-1';
+
+            if (analyseData.tendances.variation < 0) {
+                trendVariationDiv.classList.add('bg-green-50');
+                trendIconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>';
+                trendTextSpan.classList.add('text-green-800');
+                trendTextSpan.textContent = 'Consommation en baisse';
+                trendValueDiv.classList.add('text-green-600');
+                trendValueDiv.textContent = `${analyseData.tendances.variation}% par rapport à la période précédente`;
+            } else if (analyseData.tendances.variation > 0) {
+                trendVariationDiv.classList.add('bg-red-50');
+                trendIconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 rotate-180"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>';
+                trendTextSpan.classList.add('text-red-800');
+                trendTextSpan.textContent = 'Consommation en hausse';
+                trendValueDiv.classList.add('text-red-600');
+                trendValueDiv.textContent = `+${analyseData.tendances.variation}% par rapport à la période précédente`;
+            } else {
+                trendVariationDiv.classList.add('bg-gray-50');
+                trendTextSpan.classList.add('text-gray-800');
+                trendTextSpan.textContent = 'Consommation stable';
+                trendValueDiv.classList.add('text-gray-600');
+                trendValueDiv.textContent = '0% par rapport à la période précédente';
+            }
+
+            const optimisationHCDiv = document.getElementById('optimisation-hc');
+            const optimisationIconSpan = document.getElementById('optimisation-icon');
+            const optimisationTextSpan = document.getElementById('optimisation-text');
+            const optimisationValueDiv = document.getElementById('optimisation-value');
+
+            optimisationHCDiv.classList.remove('bg-blue-50', 'bg-orange-50');
+            optimisationIconSpan.innerHTML = '';
+            optimisationTextSpan.className = '';
+            optimisationValueDiv.className = 'text-sm mt-1';
+
+            if (analyseData.tendances.optimisationHC > 50) {
+                optimisationHCDiv.classList.add('bg-blue-50');
+                optimisationIconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                optimisationTextSpan.classList.add('text-blue-800');
+                optimisationTextSpan.textContent = 'Heures creuses bien optimisées';
+                optimisationValueDiv.classList.add('text-blue-600');
+                optimisationValueDiv.textContent = `${analyseData.tendances.optimisationHC}% de la consommation en HC`;
+            } else {
+                optimisationHCDiv.classList.add('bg-orange-50');
+                optimisationIconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+                optimisationTextSpan.classList.add('text-orange-800');
+                optimisationTextSpan.textContent = 'Heures creuses peu optimisées';
+                optimisationValueDiv.classList.add('text-orange-600');
+                optimisationValueDiv.textContent = `${analyseData.tendances.optimisationHC}% de la consommation en HC (objectif: >50%)`;
+            }
+
+            // Update Charts
+            updateCharts(analyseData.profilHoraire);
+        }
+
+        function formatPeriodeHeures(heures) {
+            if (!heures || heures.length === 0) return 'N/A';
+            if (heures.length === 1) return `${heures[0]}h`;
+            if (heures.length === 2) return `${heures[0]}h - ${heures[1]}h`;
+            return `${heures[0]}h - ${heures[heures.length - 1]}h`;
+        }
+
+        function updateCharts(profilHoraire) {
+            // Destroy existing charts if they exist
+            if (hourlyProfileChart) hourlyProfileChart.destroy();
+
+            // Hourly Profile Chart
+            const ctxHourly = document.getElementById('hourlyProfileChart').getContext('2d');
+            hourlyProfileChart = new Chart(ctxHourly, {
+                type: 'bar',
+                data: {
+                    labels: profilHoraire.map(d => d.heure),
+                    datasets: [
+                        {
+                            label: 'Puissance moyenne (W)',
+                            data: profilHoraire.map(d => d.puissance),
+                            backgroundColor: '#8b5cf6', // purple-500
+                        },
+                        {
+                            label: 'Puissance P90 (W)',
+                            data: profilHoraire.map(d => d.p90),
+                            backgroundColor: '#f97316', // orange-500
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event Listeners
+        periodeMoisBtn.addEventListener('click', () => {
+            periode = 'mois';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        periodePeriodeBtn.addEventListener('click', () => {
+            periode = 'periode';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            selectedMonth.setMonth(selectedMonth.getMonth() - 1);
+            displaySelectedMonth();
+            loadData();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            selectedMonth.setMonth(selectedMonth.getMonth() + 1);
+            displaySelectedMonth();
+            loadData();
+        });
+
+        startDateInput.addEventListener('change', () => {
+            dateRange.start = startDateInput.value;
+            loadData();
+        });
+
+        endDateInput.addEventListener('change', () => {
+            dateRange.end = endDateInput.value;
+            loadData();
+        });
+
+        // Initial load
+        updatePeriodeButtons();
+        displaySelectedMonth();
+        loadData();
+    });
+</script>
+{% endblock %}

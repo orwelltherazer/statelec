@@ -1,0 +1,20 @@
+{
+    "name": "statelec/gemini",
+    "description": "Linky Monitor rewrite in PHP",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Gemini"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "twig/twig": "4.x-dev",
+        "vlucas/phpdotenv": "^5.6@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Statelec\\": "src/"
+        }
+    }
+}

@@ -1,0 +1,155 @@
+{% extends "base.twig" %}
+
+{% block title %}Dashboard - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    {# Section des cartes de statistiques #}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {# Carte Consommation du jour #}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Consommation du jour</span>
+                {# Icon: Activity #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </div>
+            <div class="text-3xl font-bold">{{ consoDuJour }} kWh</div>
+            <div class="text-sm flex items-center mt-2 {{ variationColor }}">
+                {% if variationText is not empty %}
+                    {% if variationText starts with '+' %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 rotate-180"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    {% elseif variationText starts with '-' %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+                    {% endif %}
+                {% endif %}
+                {{ variationText }}
+            </div>
+        </div>
+
+        {# Carte Coût estimé #}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Coût estimé</span>
+                {# Icon: DollarSign #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+            <div class="text-3xl font-bold">{{ coutEstime }} €</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Aujourd'hui</div>
+        </div>
+
+        {# Carte Puissance maximale #}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Puissance maximale</span>
+                {# Icon: BarChart2 #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            </div>
+            <div class="text-3xl font-bold">{{ puissanceMax }} W</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h</div>
+        </div>
+    </div>
+
+    {# Graphique #}
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-semibold mb-4">Consommation cumulative sur 24h</h2>
+        <div style="width: 100%; height: 250px;">
+            <canvas id="consumptionChart"></canvas>
+        </div>
+    </div>
+
+    {# Cartes Index HC/HP #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Index Heures Creuses</h3>
+            <div class="text-2xl font-bold text-blue-500">{{ currentData.hchc }} kWh</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Consommation HC (24h): {{ conso24hHC }} kWh</div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Index Heures Pleines</h3>
+            <div class="text-2xl font-bold text-orange-500">{{ currentData.hchp }} kWh</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Consommation HP (24h): {{ conso24hHP }} kWh</div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chartData = {{ chartData | json_encode | raw }};
+        const theme = '{{ theme }}'; // Get theme from PHP
+
+        const labels = chartData.map(d => d.time);
+        const indexHcData = chartData.map(d => d.indexHc);
+        const indexHpData = chartData.map(d => d.indexHp);
+
+        const ctx = document.getElementById('consumptionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Consommation HC (kWh)',
+                        data: indexHcData,
+                        borderColor: '#3b82f6', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Consommation HP (kWh)',
+                        data: indexHpData,
+                        borderColor: '#f97316', // orange-500
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            color: theme === 'dark' ? '#374151' : '#e5e7eb'
+                        },
+                        ticks: {
+                            color: theme === 'dark' ? '#9ca3af' : '#6b7280'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: theme === 'dark' ? '#374151' : '#e5e7eb'
+                        },
+                        ticks: {
+                            color: theme === 'dark' ? '#9ca3af' : '#6b7280'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: theme === 'dark' ? '#e5e7eb' : '#374151'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                        borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                        borderWidth: 1,
+                        titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                        bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+

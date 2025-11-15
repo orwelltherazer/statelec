@@ -1,0 +1,604 @@
+{% extends "base.twig" %}
+
+{% block title %}Historique - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-6 sm:p-10 space-y-6">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h2 class="text-xl font-semibold">Historique de consommation</h2>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <div class="flex gap-2">
+                    <button
+                        id="periode-jour"
+                        class="px-4 py-2 rounded-lg transition bg-blue-500 text-white"
+                        data-periode="jour"
+                    >
+                        Jour
+                    </button>
+                    <button
+                        id="periode-periode"
+                        class="px-4 py-2 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
+                        data-periode="periode"
+                    >
+                        Période
+                    </button>
+                </div>
+
+                <div id="date-navigation" class="flex items-center gap-3">
+                    <button
+                        id="prev-day"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <span id="selected-date-display" class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                        {# Date will be set by JS #}
+                    </span>
+
+                    <button
+                        id="next-day"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="date-range-selection" class="flex gap-2 items-center hidden">
+                    <input
+                        type="date"
+                        id="start-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                    <span class="text-gray-500">au</span>
+                    <input
+                        type="date"
+                        id="end-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-indicator" class="flex justify-center items-center h-64 hidden">
+            <div class="text-lg">Chargement des données...</div>
+        </div>
+
+        <div id="chart-section">
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Puissance soutirée (W)</h2>
+                <div style="width: 100%; height: 400px;">
+                    <canvas id="powerChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Consommation cumulative</h2>
+                <div style="width: 100%; height: 400px;">
+                    <canvas id="cumulativeConsumptionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Périodes tarifaires</h2>
+                <div style="width: 100%; height: 200px;">
+                    <canvas id="tariffPeriodChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Répartition HC/HP</h2>
+                <div style="width: 100%; height: 300px;">
+                    <canvas id="hchpDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold mb-4">Statistiques</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="text-sm text-blue-800 dark:text-blue-200">Total points</div>
+                    <div id="total-points" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0</div>
+                </div>
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <div class="text-sm text-green-800 dark:text-green-200">Puissance moyenne</div>
+                    <div id="avg-power" class="text-2xl font-bold text-green-600 dark:text-green-400">0 W</div>
+                </div>
+                <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <div class="text-sm text-purple-800 dark:text-purple-200">Période historique</div>
+                    <div id="history-period" class="text-2xl font-bold text-purple-600 dark:text-purple-400">N/A</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const config = {{ config | json_encode | raw }};
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+        let periode = 'jour'; // 'jour' or 'periode'
+        let selectedDate = new Date();
+        let dateRange = {
+            start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+            end: new Date().toISOString().split('T')[0]
+        };
+
+        const periodeJourBtn = document.getElementById('periode-jour');
+        const periodePeriodeBtn = document.getElementById('periode-periode');
+        const dateNavigation = document.getElementById('date-navigation');
+        const dateRangeSelection = document.getElementById('date-range-selection');
+        const selectedDateDisplay = document.getElementById('selected-date-display');
+        const prevDayBtn = document.getElementById('prev-day');
+        const nextDayBtn = document.getElementById('next-day');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const chartSection = document.getElementById('chart-section');
+
+        // Chart instances
+        let powerChart, cumulativeConsumptionChart, tariffPeriodChart, hchpDistributionChart;
+
+        function updatePeriodeButtons() {
+            if (periode === 'jour') {
+                periodeJourBtn.classList.add('bg-blue-500', 'text-white');
+                periodeJourBtn.classList.remove('bg-gray-700', 'text-gray-300', 'bg-gray-100', 'text-gray-700');
+                periodePeriodeBtn.classList.remove('bg-blue-500', 'text-white');
+                periodePeriodeBtn.classList.add(theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100', theme === 'dark' ? 'text-gray-300' : 'text-gray-700');
+                dateNavigation.classList.remove('hidden');
+                dateRangeSelection.classList.add('hidden');
+            } else {
+                periodePeriodeBtn.classList.add('bg-blue-500', 'text-white');
+                periodePeriodeBtn.classList.remove('bg-gray-700', 'text-gray-300', 'bg-gray-100', 'text-gray-700');
+                periodeJourBtn.classList.remove('bg-blue-500', 'text-white');
+                periodeJourBtn.classList.add(theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100', theme === 'dark' ? 'text-gray-300' : 'text-gray-700');
+                dateNavigation.classList.add('hidden');
+                dateRangeSelection.classList.remove('hidden');
+                // Set date input values when switching to 'periode'
+                startDateInput.value = dateRange.start;
+                endDateInput.value = dateRange.end;
+            }
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function displaySelectedDate() {
+            selectedDateDisplay.textContent = selectedDate.toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        async function loadData() {
+            loadingIndicator.classList.remove('hidden');
+            chartSection.classList.add('hidden');
+
+            let url = '';
+            if (periode === 'jour') {
+                const dateString = formatDate(selectedDate);
+                url = `${basePath}api/consumption/day/${dateString}`;
+            } else {
+                url = `${basePath}api/consumption?start=${dateRange.start}&end=${dateRange.end}`;
+            }
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                processChartData(data);
+            } catch (error) {
+                console.error('Erreur de chargement des données:', error);
+                alert('Erreur lors du chargement des données historiques.');
+                setChartData([]); // Clear charts on error
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                chartSection.classList.remove('hidden');
+            }
+        }
+
+        function processChartData(data) {
+            if (!data || data.length === 0) {
+                updateCharts([], [], [], []);
+                updateStats(0, 0, 'N/A');
+                return;
+            }
+
+            const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            let processedData = [];
+
+            if (periode === 'jour') {
+                const sampledData = [];
+                let lastSampleTime = null;
+
+                for (const d of sortedData) {
+                    const dataTime = new Date(d.timestamp);
+                    if (!lastSampleTime || (dataTime.getTime() - lastSampleTime.getTime()) >= 10 * 60 * 1000) {
+                        sampledData.push(d);
+                        lastSampleTime = dataTime;
+                    }
+                }
+
+                if (sampledData.length > 0) {
+                    const firstData = sampledData[0];
+                    const firstHC = parseFloat(firstData.hchc || 0);
+                    const firstHP = parseFloat(firstData.hchp || 0);
+
+                    processedData = sampledData.map((d) => {
+                        let hcConsumption = 0;
+                        let hpConsumption = 0;
+
+                        if (d.hchc !== undefined && firstData.hchc !== undefined) {
+                            hcConsumption = parseFloat((parseFloat(d.hchc) - firstHC).toFixed(2));
+                        }
+                        if (d.hchp !== undefined && firstData.hchp !== undefined) {
+                            hpConsumption = parseFloat((parseFloat(d.hchp) - firstHP).toFixed(2));
+                        }
+
+                        return {
+                            label: new Date(d.timestamp).toLocaleTimeString('fr-FR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                                timeZone: config.timezone || 'Europe/Paris'
+                            }),
+                            puissance: parseInt(d.papp || 0),
+                            consoHC: hcConsumption,
+                            consoHP: hpConsumption,
+                            periode: parseInt(d.ptec || 0) === 2 ? 1 : 0 // 1=HP, 0=HC
+                        };
+                    });
+                }
+            } else { // periode === 'periode'
+                // For period view, we might want daily aggregates or similar,
+                // but for now, let's just sample as well for consistency in chart data structure
+                const sampledData = [];
+                let lastSampleTime = null;
+
+                for (const d of sortedData) {
+                    const dataTime = new Date(d.timestamp);
+                    if (!lastSampleTime || (dataTime.getTime() - lastSampleTime.getTime()) >= 60 * 60 * 1000) { // Sample hourly for period view
+                        sampledData.push(d);
+                        lastSampleTime = dataTime;
+                    }
+                }
+
+                if (sampledData.length > 0) {
+                    const firstData = sampledData[0];
+                    const firstHC = parseFloat(firstData.hchc || 0);
+                    const firstHP = parseFloat(firstData.hchp || 0);
+
+                    processedData = sampledData.map((d) => {
+                        let hcConsumption = 0;
+                        let hpConsumption = 0;
+
+                        if (d.hchc !== undefined && firstData.hchc !== undefined) {
+                            hcConsumption = parseFloat((parseFloat(d.hchc) - firstHC).toFixed(2));
+                        }
+                        if (d.hchp !== undefined && firstData.hchp !== undefined) {
+                            hpConsumption = parseFloat((parseFloat(d.hchp) - firstHP).toFixed(2));
+                        }
+
+                        return {
+                            label: new Date(d.timestamp).toLocaleString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                                timeZone: config.timezone || 'Europe/Paris'
+                            }),
+                            puissance: parseInt(d.papp || 0),
+                            consoHC: hcConsumption,
+                            consoHP: hpConsumption,
+                            periode: parseInt(d.ptec || 0) === 2 ? 1 : 0
+                        };
+                    });
+                }
+            }
+
+            updateCharts(processedData);
+            updateStats(data.length, processedData);
+        }
+
+        function updateCharts(processedData) {
+            const labels = processedData.map(d => d.label);
+            const puissanceData = processedData.map(d => d.puissance);
+            const consoHCData = processedData.map(d => d.consoHC);
+            const consoHPData = processedData.map(d => d.consoHP);
+            const periodeData = processedData.map(d => d.periode);
+
+            // Destroy existing charts if they exist
+            if (powerChart) powerChart.destroy();
+            if (cumulativeConsumptionChart) cumulativeConsumptionChart.destroy();
+            if (tariffPeriodChart) tariffPeriodChart.destroy();
+            if (hchpDistributionChart) hchpDistributionChart.destroy();
+
+            // Power Chart
+            const ctxPower = document.getElementById('powerChart').getContext('2d');
+            powerChart = new Chart(ctxPower, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Puissance (W)',
+                        data: puissanceData,
+                        borderColor: '#3b82f6', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
+                        }
+                    }
+                }
+            });
+
+            // Cumulative Consumption Chart
+            const ctxCumulative = document.getElementById('cumulativeConsumptionChart').getContext('2d');
+            cumulativeConsumptionChart = new Chart(ctxCumulative, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Consommation HP (kWh)',
+                            data: consoHPData,
+                            borderColor: '#f97316', // orange-500
+                            backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Consommation HC (kWh)',
+                            data: consoHCData,
+                            borderColor: '#3b82f6', // blue-500
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
+                        }
+                    }
+                }
+            });
+
+            // Tariff Period Chart
+            const ctxTariff = document.getElementById('tariffPeriodChart').getContext('2d');
+            tariffPeriodChart = new Chart(ctxTariff, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Période tarifaire',
+                        data: periodeData,
+                        borderColor: '#8b5cf6', // purple-500
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0, // Step chart
+                        pointRadius: 0,
+                        stepped: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 1.1, // Max value for HC/HP (0 or 1)
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    return value === 0 ? 'HC' : 'HP';
+                                },
+                                color: theme === 'dark' ? '#9ca3af' : '#6b7280'
+                            },
+                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y === 0 ? 'Heures Creuses' : 'Heures Pleines';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // HC/HP Distribution Chart (Pie Chart)
+            const lastConsoHC = processedData.length > 0 ? processedData[processedData.length - 1].consoHC : 0;
+            const lastConsoHP = processedData.length > 0 ? processedData[processedData.length - 1].consoHP : 0;
+            const totalConso = lastConsoHC + lastConsoHP;
+
+            const ctxHCHP = document.getElementById('hchpDistributionChart').getContext('2d');
+            hchpDistributionChart = new Chart(ctxHCHP, {
+                type: 'pie',
+                data: {
+                    labels: ['Heures Creuses', 'Heures Pleines'],
+                    datasets: [{
+                        data: [lastConsoHC, lastConsoHP],
+                        backgroundColor: ['#3b82f6', '#f97316'], // blue-500, orange-500
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: theme === 'dark' ? '#e5e7eb' : '#374151'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            borderWidth: 1,
+                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(2) + ' kWh';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateStats(totalPointsFromAPI, processedData) {
+            // Use totalRecordCount passed from PHP for "Total points"
+            document.getElementById('total-points').textContent = {{ totalRecordCount }}; 
+
+            // Use globalAveragePower passed from PHP for "Puissance moyenne"
+            document.getElementById('avg-power').textContent = {{ globalAveragePower }} + ' W';
+
+            // Use globalDataRange for "Période historique"
+            const globalDataRange = {{ globalDataRange | json_encode | raw }};
+            let historyPeriod = 'N/A';
+            if (globalDataRange.min && globalDataRange.max) {
+                const startDate = new Date(globalDataRange.min).toLocaleDateString('fr-FR', { timeZone: config.timezone || 'Europe/Paris' });
+                const endDate = new Date(globalDataRange.max).toLocaleDateString('fr-FR', { timeZone: config.timezone || 'Europe/Paris' });
+                historyPeriod = `${startDate} - ${endDate}`;
+            }
+            document.getElementById('history-period').textContent = historyPeriod;
+        }
+
+        // Event Listeners
+        periodeJourBtn.addEventListener('click', () => {
+            periode = 'jour';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        periodePeriodeBtn.addEventListener('click', () => {
+            periode = 'periode';
+            updatePeriodeButtons();
+            loadData();
+        });
+
+        prevDayBtn.addEventListener('click', () => {
+            selectedDate.setDate(selectedDate.getDate() - 1);
+            displaySelectedDate();
+            loadData();
+        });
+
+        nextDayBtn.addEventListener('click', () => {
+            selectedDate.setDate(selectedDate.getDate() + 1);
+            displaySelectedDate();
+            loadData();
+        });
+
+        startDateInput.addEventListener('change', () => {
+            dateRange.start = startDateInput.value;
+            loadData();
+        });
+
+        endDateInput.addEventListener('change', () => {
+            dateRange.end = endDateInput.value;
+            loadData();
+        });
+
+        // Initial load
+        updatePeriodeButtons();
+        displaySelectedDate();
+        loadData();
+    });
+</script>
+{% endblock %}
