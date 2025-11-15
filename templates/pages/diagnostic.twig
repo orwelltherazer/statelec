@@ -148,9 +148,9 @@
              <div class="space-y-4">
                  <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                      <h3 class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-2">Récupération de l'historique ThingSpeak</h3>
-                     <p class="text-sm text-blue-600 dark:text-blue-300 mb-4">
-                         Récupère jusqu'à 8000 enregistrements historiques depuis ThingSpeak et les importe dans la base de données.
-                     </p>
+                      <p class="text-sm text-blue-600 dark:text-blue-300 mb-4">
+                          Récupère jusqu'à 8000 enregistrements historiques depuis ThingSpeak et les importe/écrase dans la base de données.
+                      </p>
                      <div id="fetch-progress" class="hidden mb-4">
                          <div class="flex items-center justify-between mb-2">
                              <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Progression</span>
@@ -314,7 +314,7 @@
         const progressText = document.getElementById('progress-text');
 
         fetchHistoricalBtn.addEventListener('click', async () => {
-            if (!confirm('Cette action va récupérer jusqu\'à 8000 enregistrements historiques depuis ThingSpeak. Cela peut prendre du temps. Continuer ?')) {
+            if (!confirm('Cette action va récupérer jusqu\'à 8000 enregistrements historiques depuis ThingSpeak et écraser les données existantes. Cela peut prendre du temps. Continuer ?')) {
                 return;
             }
 

@@ -186,7 +186,6 @@ class DiagnosticController
 
             $feeds = $data['feeds'];
             $processedCount = 0;
-            $skippedCount = 0;
             $errorCount = 0;
 
             // Process each feed record
@@ -203,12 +202,26 @@ class DiagnosticController
                     continue;
                 }
 
-                // Check if this timestamp already exists to prevent duplicates
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM consumption_data WHERE timestamp = :timestamp");
-                $stmt->execute([':timestamp' => $timestamp]);
-                if ($stmt->fetchColumn() > 0) {
-                    $skippedCount++;
-                    continue;
+                try {
+                    // Insert or update data into the database
+                    $stmt = $this->pdo->prepare("
+                        INSERT INTO consumption_data (timestamp, papp, ptec, hchc, hchp)
+                        VALUES (:timestamp, :papp, :ptec, :hchc, :hchp)
+                        ON DUPLICATE KEY UPDATE
+                        papp = VALUES(papp), ptec = VALUES(ptec), hchc = VALUES(hchc), hchp = VALUES(hchp)
+                    ");
+
+                    $stmt->execute([
+                        ':timestamp' => $timestamp,
+                        ':papp' => $papp,
+                        ':ptec' => $ptec,
+                        ':hchc' => $hchc,
+                        ':hchp' => $hchp,
+                    ]);
+
+                    $processedCount++;
+                } catch (\Exception $e) {
+                    $errorCount++;
                 }
 
                 try {
@@ -236,7 +249,7 @@ class DiagnosticController
 
             echo json_encode([
                 'success' => true,
-                'message' => "Historical data fetch completed. Processed: {$processedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}."
+                'message' => "Historical data fetch completed. Processed: {$processedCount} (inserted/updated), Errors: {$errorCount}."
             ]);
 
         } catch (\Exception $e) {
