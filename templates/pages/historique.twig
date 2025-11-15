@@ -70,12 +70,20 @@
         </div>
 
         <div id="chart-section">
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold mb-4">Puissance soutirée (W)</h2>
-                <div style="width: 100%; height: 400px;">
-                    <canvas id="powerChart"></canvas>
-                </div>
-            </div>
+             <div class="mt-8">
+                 <div class="flex items-center justify-between mb-4">
+                     <h2 class="text-xl font-semibold">Puissance soutirée (W)</h2>
+                     <button
+                         id="resetZoomPowerBtn"
+                         class="px-3 py-1 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition hidden"
+                     >
+                         Réinitialiser zoom
+                     </button>
+                 </div>
+                 <div style="width: 100%; height: 400px;">
+                     <canvas id="powerChart"></canvas>
+                 </div>
+             </div>
 
             <div class="mt-8">
                 <h2 class="text-xl font-semibold mb-4">Consommation cumulative</h2>
@@ -121,6 +129,11 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://unpkg.com/chartjs-plugin-zoom@latest/dist/chartjs-plugin-zoom.min.js"></script>
+<script>
+// Enregistrer le plugin zoom avec Chart.js
+Chart.register(ChartZoom);
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const basePath = "{{ basePath }}";
@@ -133,6 +146,7 @@
             start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
             end: new Date().toISOString().split('T')[0]
         };
+        let powerChartZoomed = false;
 
         const periodeJourBtn = document.getElementById('periode-jour');
         const periodePeriodeBtn = document.getElementById('periode-periode');
@@ -145,6 +159,7 @@
         const endDateInput = document.getElementById('end-date');
         const loadingIndicator = document.getElementById('loading-indicator');
         const chartSection = document.getElementById('chart-section');
+        const resetZoomPowerBtn = document.getElementById('resetZoomPowerBtn');
 
         // Chart instances
         let powerChart, cumulativeConsumptionChart, tariffPeriodChart, hchpDistributionChart;
@@ -223,16 +238,8 @@
             let processedData = [];
 
             if (periode === 'jour') {
-                const sampledData = [];
-                let lastSampleTime = null;
-
-                for (const d of sortedData) {
-                    const dataTime = new Date(d.timestamp);
-                    if (!lastSampleTime || (dataTime.getTime() - lastSampleTime.getTime()) >= 10 * 60 * 1000) {
-                        sampledData.push(d);
-                        lastSampleTime = dataTime;
-                    }
-                }
+                // Load all data points for day view to enable minute-level zoom
+                const sampledData = sortedData;
 
                 if (sampledData.length > 0) {
                     const firstData = sampledData[0];
@@ -354,26 +361,59 @@
                             grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
                             ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
                         },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
-                            ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
-                        }
-                    },
-                    plugins: {
-                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
-                        tooltip: {
-                            backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
-                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-                            borderWidth: 1,
-                            titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
-                            bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
-                        }
-                    }
-                }
-            });
+                         y: {
+                             beginAtZero: true,
+                             grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' },
+                             ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' }
+                         }
+                     },
+                     plugins: {
+                         legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                         tooltip: {
+                             backgroundColor: theme === 'dark' ? '#1f2937' : '#fff',
+                             borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                             borderWidth: 1,
+                             titleColor: theme === 'dark' ? '#e5e7eb' : '#374151',
+                             bodyColor: theme === 'dark' ? '#e5e7eb' : '#374151'
+                         },
+                         zoom: {
+                             pan: {
+                                 enabled: true,
+                                 mode: 'x',
+                                 threshold: 10,
+                                 modifierKey: null
+                             },
+                             zoom: {
+                                 wheel: {
+                                     enabled: true
+                                 },
+                                 pinch: {
+                                     enabled: true
+                                 },
+                                 mode: 'x'
+                             }
+                         }
+                     }
+                  }
+             });
 
-            // Cumulative Consumption Chart
+              // Add zoom event listener after chart creation (only once)
+              if (!powerChart.canvas.hasZoomListener) {
+                  // Écouter les événements de zoom du plugin pour afficher le bouton reset
+                  powerChart.options.plugins.zoom.zoom.onZoomComplete = () => {
+                      if (periode === 'jour') {
+                          resetZoomPowerBtn.classList.remove('hidden');
+                      }
+                  };
+                  powerChart.canvas.hasZoomListener = true;
+              }
+
+              // Hide reset button if not in jour mode
+              if (periode !== 'jour') {
+                  resetZoomPowerBtn.classList.add('hidden');
+              }
+
+             // Cumulative Consumption Chart
             const ctxCumulative = document.getElementById('cumulativeConsumptionChart').getContext('2d');
             cumulativeConsumptionChart = new Chart(ctxCumulative, {
                 type: 'line',
@@ -593,6 +633,12 @@
         endDateInput.addEventListener('change', () => {
             dateRange.end = endDateInput.value;
             loadData();
+        });
+
+        resetZoomPowerBtn.addEventListener('click', () => {
+            powerChart.resetZoom();
+            resetZoomPowerBtn.classList.add('hidden');
+            powerChartZoomed = false;
         });
 
         // Initial load
