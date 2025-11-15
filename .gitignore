@@ -1,0 +1,54 @@
+# Environment variables
+.env*
+.env
+
+# Logs
+*.log
+logs/
+
+# Specific cron logs (if needed)
+cron/alert_cron.php.log
+cron/acquire_data.php.log
+
+# Database files
+database/*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache and temporary files
+cache/
+tmp/
+temp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# Composer
+vendor/
+
+# PHP sessions
+sessions/
+
+# Uploads
+uploads/
+public/uploads/
+
+# Apache config files
+**/.htaccess
+
+# Backup files
+*.bak
+*.backup
+*~
