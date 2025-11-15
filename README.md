@@ -73,7 +73,7 @@ BASE_PATH=/statelec
 ### Collecte de données
 
 La collecte automatique des données se fait via les scripts cron :
-- `cron/acquire_data.php` : Récupération des données du compteur Linky
+- `cron/acquire_data.php` : Récupération des données du compteur Linky via Thingspeak
 - `cron/alert_cron.php` : Vérification des seuils d'alerte
 
 ### API
