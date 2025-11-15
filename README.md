@@ -42,10 +42,10 @@ Application web de monitoring de consommation électrique développée en PHP av
    composer install
    ```
 
-3. **Configuration de la base de données**
-   - Créer une base de données MySQL
-   - Importer le schéma depuis `database/alerts_log.sql`
-   - Configurer les variables d'environnement dans `.env`
+ 3. **Configuration de la base de données**
+    - Créer une base de données MySQL
+    - Importer le schéma depuis `db/dump.sql`
+    - Configurer les variables d'environnement dans `.env`
 
 4. **Configuration du serveur web**
    - Configurer le DocumentRoot vers le dossier `public/`
@@ -101,9 +101,9 @@ statelec/
 │   ├── pages/          # Pages principales
 │   ├── components/     # Composants réutilisables
 │   └── base.twig       # Template de base
-├── cron/               # Scripts de tâches planifiées
-├── database/           # Schémas et données SQL
-├── composer.json       # Dépendances PHP
+ ├── cron/               # Scripts de tâches planifiées
+ ├── db/                 # Schémas et données SQL
+ ├── composer.json       # Dépendances PHP
 └── .gitignore         # Fichiers à ignorer
 ```
 
