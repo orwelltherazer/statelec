@@ -20,6 +20,7 @@
 - **Frontend** : Twig templates, Tailwind CSS, JavaScript
 - **Base de données** : MySQL/MariaDB
 - **Graphiques** : Chart.js
+- **Module TIC** : Transmission directe des données Linky
 - **Notifications** : Toasts personnalisés
 - **Autres** : Composer pour la gestion des dépendances, Dotenv pour la config
 
@@ -75,7 +76,7 @@ BASE_PATH=/statelec
 
  ### Collecte de données
 
- L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module transmet les données de consommation électrique vers la plateforme ThingSpeak. L'application peut récupérer ces données automatiquement via l'API ThingSpeak (configuration requise dans les paramètres).
+ L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module transmet directement les données de consommation électrique vers l'API de Statelec.
 
  Les détails de la réalisation du module de collecte des données seront ajoutés prochainement.
 
@@ -85,7 +86,7 @@ BASE_PATH=/statelec
 ### API
 
 L'application expose une API REST pour l'intégration :
-- `POST /api/consumption` : Sauvegarde de nouvelles données (avec clé API)
+- `POST /api/consumption` : Réception des données du module TIC (avec clé API)
 - `GET /api/settings/{key}` : Récupération d'un paramètre
 - `POST /api/settings/{key}` : Sauvegarde d'un paramètre
 - `GET /api/diagnostic/paginated` : Données paginées pour le diagnostic
