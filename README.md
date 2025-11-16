@@ -75,16 +75,7 @@ BASE_PATH=/statelec
 
  ### Collecte de données
 
- L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module peut transmettre les données de consommation électrique vers la plateforme ThingSpeak, ou les données peuvent être importées manuellement via un fichier CSV exporté depuis ThingSpeak.
-
- #### Collecte automatique (API ThingSpeak)
- L'application peut récupérer les données automatiquement via l'API ThingSpeak (configuration requise dans les paramètres).
-
- #### Import manuel (CSV)
- Pour importer des données historiques ou en cas de problème API :
- 1. Exportez les données depuis ThingSpeak au format CSV
- 2. Placez le fichier CSV dans la racine du projet sous le nom `thingSpeak_export.csv`
- 3. Exécutez le script d'import : `php public/import_csv.php`
+ L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module transmet les données de consommation électrique vers la plateforme ThingSpeak. L'application peut récupérer ces données automatiquement via l'API ThingSpeak (configuration requise dans les paramètres).
 
  Les détails de la réalisation du module de collecte des données seront ajoutés prochainement.
 
@@ -133,7 +124,6 @@ statelec/
 - **Responsive design** : Interface adaptée mobile et desktop
 - **Sécurité** : Protection API avec clé obligatoire, validation des données
 - **Internationalisation** : Support des fuseaux horaires configurables
-- **Import de données** : Script d'import CSV depuis ThingSpeak
 - **Notifications** : Système de toasts pour les retours utilisateur
 - **Performance** : Optimisation des requêtes et mise en cache
 
@@ -152,15 +142,6 @@ php -S localhost:8000 -t public/
 ### Tests
 
 Les tests unitaires et d'intégration peuvent être ajoutés dans un dossier `tests/`.
-
-### Import de données CSV
-
-Pour importer des données ThingSpeak :
-```bash
-php public/import_csv.php
-```
-
-Assurez-vous que le fichier `thingSpeak_export.csv` est à la racine.
 
 ## Contribution
 
