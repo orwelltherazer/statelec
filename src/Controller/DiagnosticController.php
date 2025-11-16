@@ -37,7 +37,7 @@ class DiagnosticController
             'dbStatus' => $data['dbStatus'],
             'recordCount' => $data['recordCount'],
             'lastRecordTimestamp' => $data['lastRecordTimestamp'],
-            'theme' => 'light' // TODO: Implement theme switching
+            'moduleStatus' => $data['moduleStatus']
         ];
     }
 
@@ -72,6 +72,13 @@ class DiagnosticController
                 $lastRecordTimestamp = 'Aucun enregistrement';
             }
 
+            // Check if data received recently (last 60 seconds)
+            $sixtySecondsAgo = (new DateTime())->modify('-1 minute');
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM consumption_data WHERE timestamp >= ?");
+            $stmt->execute([$sixtySecondsAgo->format('Y-m-d H:i:s')]);
+            $recentRecords = $stmt->fetchColumn();
+            $moduleStatus = $recentRecords > 0 ? 'online' : 'offline';
+
         } catch (\PDOException $e) {
             $dbStatus = 'error';
             // Log the error for debugging
@@ -81,7 +88,8 @@ class DiagnosticController
         return [
             'dbStatus' => $dbStatus,
             'recordCount' => $recordCount,
-            'lastRecordTimestamp' => $lastRecordTimestamp
+            'lastRecordTimestamp' => $lastRecordTimestamp,
+            'moduleStatus' => $moduleStatus
         ];
     }
 
@@ -124,145 +132,5 @@ class DiagnosticController
             http_response_code(500);
             echo json_encode(['error' => 'Erreur lors de la récupération des données paginées: ' . $e->getMessage()]);
         }
-    }
-
-    public function fetchHistoricalData(): void
-    {
-        header('Content-Type: application/json');
-
-        if (!$this->pdo) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Connexion à la base de données impossible']);
-            return;
-        }
-
-        try {
-            // Get API URL from settings
-            $apiUrl = $this->getSetting('apiUrl');
-            if (!$apiUrl) {
-                http_response_code(400);
-                echo json_encode(['error' => 'API URL not configured in settings.']);
-                return;
-            }
-
-            // Get field mappings from settings
-            $fieldPapp = $this->getSetting('fieldPapp', 'field1');
-            $fieldIinst = $this->getSetting('fieldIinst', 'field4');
-            $fieldPtec = $this->getSetting('fieldPtec', 'field7');
-            $fieldHchc = $this->getSetting('fieldHchc', 'field2');
-            $fieldHchp = $this->getSetting('fieldHchp', 'field3');
-
-            // Fetch data from the external API (max 8000 records)
-            $apiUrlWithParams = $apiUrl . (strpos($apiUrl, '?') !== false ? '&' : '?') . 'results=8000';
-
-            $context = stream_context_create([
-                'http' => [
-                    'timeout' => 60, // Longer timeout for large fetch
-                    'user_agent' => 'Statelec-Cron/1.0'
-                ]
-            ]);
-
-            $response = file_get_contents($apiUrlWithParams, false, $context);
-
-            if ($response === false) {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to fetch data from API.']);
-                return;
-            }
-
-            $data = json_decode($response, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                http_response_code(500);
-                echo json_encode(['error' => 'Invalid JSON response from API.']);
-                return;
-            }
-
-            if (!isset($data['feeds']) || empty($data['feeds'])) {
-                http_response_code(400);
-                echo json_encode(['error' => 'API response does not contain feeds or it\'s empty.']);
-                return;
-            }
-
-            $feeds = $data['feeds'];
-            $processedCount = 0;
-            $errorCount = 0;
-
-            // Process each feed record
-            foreach ($feeds as $feed) {
-                $timestamp = $feed['created_at'] ?? (new DateTime())->format('Y-m-d H:i:s');
-                $papp = $feed[$fieldPapp] ?? null;
-                $ptec = $feed[$fieldPtec] ?? null;
-                $hchc = $feed[$fieldHchc] ?? null;
-                $hchp = $feed[$fieldHchp] ?? null;
-
-                // Validate essential data
-                if ($papp === null || $hchc === null || $hchp === null) {
-                    $errorCount++;
-                    continue;
-                }
-
-                try {
-                    // Insert or update data into the database
-                    $stmt = $this->pdo->prepare("
-                        INSERT INTO consumption_data (timestamp, papp, ptec, hchc, hchp)
-                        VALUES (:timestamp, :papp, :ptec, :hchc, :hchp)
-                        ON DUPLICATE KEY UPDATE
-                        papp = VALUES(papp), ptec = VALUES(ptec), hchc = VALUES(hchc), hchp = VALUES(hchp)
-                    ");
-
-                    $stmt->execute([
-                        ':timestamp' => $timestamp,
-                        ':papp' => $papp,
-                        ':ptec' => $ptec,
-                        ':hchc' => $hchc,
-                        ':hchp' => $hchp,
-                    ]);
-
-                    $processedCount++;
-                } catch (\Exception $e) {
-                    $errorCount++;
-                }
-
-                try {
-                    // Insert data into the database
-                    $stmt = $this->pdo->prepare("
-                        INSERT INTO consumption_data (timestamp, papp, ptec, hchc, hchp)
-                        VALUES (:timestamp, :papp, :ptec, :hchc, :hchp)
-                        ON DUPLICATE KEY UPDATE
-                        papp = VALUES(papp), ptec = VALUES(ptec), hchc = VALUES(hchc), hchp = VALUES(hchp)
-                    ");
-
-                    $stmt->execute([
-                        ':timestamp' => $timestamp,
-                        ':papp' => $papp,
-                        ':ptec' => $ptec,
-                        ':hchc' => $hchc,
-                        ':hchp' => $hchp,
-                    ]);
-
-                    $processedCount++;
-                } catch (\Exception $e) {
-                    $errorCount++;
-                }
-            }
-
-            echo json_encode([
-                'success' => true,
-                'message' => "Historical data fetch completed. Processed: {$processedCount} (inserted/updated), Errors: {$errorCount}."
-            ]);
-
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'An error occurred while fetching historical data: ' . $e->getMessage()]);
-        }
-    }
-
-    private function getSetting(string $key, $defaultValue = null)
-    {
-        $stmt = $this->pdo->prepare("SELECT value FROM settings WHERE `key` = :key");
-        $stmt->execute([':key' => $key]);
-        $value = $stmt->fetchColumn();
-        return $value !== false ? json_decode($value, true) : $defaultValue;
     }
 }

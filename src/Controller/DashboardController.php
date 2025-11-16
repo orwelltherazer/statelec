@@ -57,7 +57,7 @@ class DashboardController
             $currentData = end($historicalData);
 
             // Initialize time variables
-            $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
+            $now = new DateTime('now', new DateTimeZone($_ENV['TIMEZONE'] ?? 'Europe/Paris'));
             $twentyFourHoursAgo = (clone $now)->modify('-24 hours');
             $fortyEightHoursAgo = (clone $now)->modify('-48 hours');
 

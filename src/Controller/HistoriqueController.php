@@ -36,7 +36,6 @@ class HistoriqueController
         return [
             'page_title' => 'Historique',
             'currentPage' => 'historique',
-            'theme' => 'light', // TODO: Implement theme switching
             'initialChartData' => [], // Will be populated by JS via API
             'initialHistoricalData' => [], // Will be populated by JS via API
             'config' => $this->getSettingsConfig(), // Pass settings for timezone etc.

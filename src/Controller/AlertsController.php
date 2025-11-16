@@ -44,8 +44,7 @@ class AlertsController
             'page_title' => 'Alertes',
             'currentPage' => 'alertes',
             'alerts' => $alerts,
-            'settings' => $settings,
-            'theme' => 'light' // TODO: Implement theme switching
+            'settings' => $settings
         ];
     }
 

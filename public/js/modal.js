@@ -97,10 +97,14 @@ class ModalSystem {
 
         // Afficher la modal
         this.modal.classList.add('show');
-        
-        // Fermeture automatique après 5 secondes pour les succès
+
+        // Masquer les boutons pour les succès
+        const modalFooter = this.modal.querySelector('.modal-footer');
         if (type === 'success') {
-            setTimeout(() => this.hide(), 5000);
+            modalFooter.style.display = 'none';
+            setTimeout(() => this.hide(), 3000);
+        } else {
+            modalFooter.style.display = 'flex';
         }
 
         // Fermeture au clic sur le fond

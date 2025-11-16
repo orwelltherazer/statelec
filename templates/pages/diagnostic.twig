@@ -8,17 +8,17 @@
         <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-6">État du module</h2>
             <div class="space-y-4">
-                 <div class="flex items-center justify-between p-4 {% if dbStatus == 'ok' %}bg-green-50 dark:bg-green-900/20{% else %}bg-red-50 dark:bg-red-900/20{% endif %} rounded-lg">
-                    <div>
-                        <div class="font-semibold {% if dbStatus == 'ok' %}text-green-800{% else %}text-red-800{% endif %}">Module Linky</div>
-                        <div class="text-sm {% if dbStatus == 'ok' %}text-green-600{% else %}text-red-600{% endif %}">Statut: {% if dbStatus == 'ok' %}online{% else %}offline{% endif %}</div>
-                    </div>
-                    {% if dbStatus == 'ok' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                    {% endif %}
-                </div>
+                 <div class="flex items-center justify-between p-4 {% if moduleStatus == 'online' %}bg-green-50 dark:bg-green-900/20{% else %}bg-red-50 dark:bg-red-900/20{% endif %} rounded-lg">
+                     <div>
+                         <div class="font-semibold {% if moduleStatus == 'online' %}text-green-800{% else %}text-red-800{% endif %}">Module Linky</div>
+                         <div class="text-sm {% if moduleStatus == 'online' %}text-green-600{% else %}text-red-600{% endif %}">Statut: {{ moduleStatus }}</div>
+                     </div>
+                     {% if moduleStatus == 'online' %}
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                     {% else %}
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                     {% endif %}
+                 </div>
 
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                      <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
@@ -31,51 +31,15 @@
                          <div class="font-semibold mt-1">{{ recordCount }} entrées</div>
                      </div>
 
-                     <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-                         <div class="text-sm text-gray-500 dark:text-gray-400">Alertes actives</div>
-                         <div class="font-semibold mt-1">0</div> {# TODO: Implement real alert count #}
-                     </div>
 
-                     <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-                         <div class="text-sm text-gray-500 dark:text-gray-400">Taux de rafraîchissement</div>
-                         <div class="font-semibold mt-1">30 secondes</div>
-                     </div>
-                 </div>
-            </div>
-        </div>
 
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Journaux système</h2>
-            <div class="p-4 rounded-lg font-mono text-sm bg-gray-100 dark:bg-gray-900 max-h-64 overflow-y-auto">
-                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Module connecté</div>
-                <div class="text-blue-500">[{{ "now"|date("H:i:s") }}] → Récupération des données...</div>
-                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Données reçues</div>
-                <div class="text-gray-500">[{{ "now"|date("H:i:s") }}] ℹ Mise à jour graphiques</div>
-                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Système opérationnel</div>
-            </div>
-        </div>
 
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Informations système</h2>
-             <div class="space-y-2 text-sm">
-                 <div class="flex justify-between">
-                     <span class="text-gray-500 dark:text-gray-400">Version application</span>
-                     <span class="font-semibold">1.0.0</span>
-                 </div>
-                 <div class="flex justify-between">
-                     <span class="text-gray-500 dark:text-gray-400">Build</span>
-                     <span class="font-semibold">2025.11.11</span>
-                 </div>
-                 <div class="flex justify-between">
-                     <span class="text-gray-500 dark:text-gray-400">Environnement</span>
-                     <span class="font-semibold">Production</span>
-                 </div>
-                 <div class="flex justify-between">
-                     <span class="text-gray-500 dark:text-gray-400">Navigateur</span>
-                     <span class="font-semibold" id="browser-info">Chargement...</span>
-                 </div>
              </div>
-        </div>
+         </div>
+
+     </div>
+
+
         
         <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-4">
@@ -141,52 +105,19 @@
                      </button>
                  </div>
              </div>
-        </div>
+         </div>
 
-         <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-             <h2 class="text-xl font-semibold mb-4">Gestion des données</h2>
-             <div class="space-y-4">
-                 <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                     <h3 class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-2">Récupération de l'historique ThingSpeak</h3>
-                      <p class="text-sm text-blue-600 dark:text-blue-300 mb-4">
-                          Récupère jusqu'à 8000 enregistrements historiques depuis ThingSpeak et les importe/écrase dans la base de données.
-                      </p>
-                     <div id="fetch-progress" class="hidden mb-4">
-                         <div class="flex items-center justify-between mb-2">
-                             <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Progression</span>
-                             <span id="progress-text" class="text-sm text-blue-600 dark:text-blue-400">0%</span>
-                         </div>
-                         <div class="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
-                             <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                         </div>
-                     </div>
-                     <button
-                         id="fetch-historical-btn"
-                         class="px-4 py-2 rounded-lg font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
-                     >
-                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                         Récupérer l'historique (max 8000)
-                     </button>
-                 </div>
-             </div>
-
-             <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-medium mb-4 text-red-600 dark:text-red-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                    Actions dangereuses
-                </h3>
-                <button
-                    id="reset-database-btn"
-                    class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-red-600 text-white hover:bg-red-700 active:bg-red-800"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                    Réinitialiser la base de données
-                </button>
-                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                     Supprime toutes les données de consommation et les paramètres. Action irréversible.
-                 </p>
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Journaux système</h2>
+            <div class="p-4 rounded-lg font-mono text-sm bg-gray-100 dark:bg-gray-900 max-h-64 overflow-y-auto">
+                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Module connecté</div>
+                <div class="text-blue-500">[{{ "now"|date("H:i:s") }}] → Récupération des données...</div>
+                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Données reçues</div>
+                <div class="text-gray-500">[{{ "now"|date("H:i:s") }}] ℹ Mise à jour graphiques</div>
+                <div class="text-green-500">[{{ "now"|date("H:i:s") }}] ✓ Système opérationnel</div>
             </div>
         </div>
+
     </div>
 </main>
 {% endblock %}
@@ -200,8 +131,7 @@
             return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         }
 
-        // Update browser info
-        document.getElementById('browser-info').textContent = navigator.userAgent.split(' ').pop();
+
 
         // Database Records Pagination
         const dbRecordsBody = document.getElementById('db-records-body');
@@ -307,115 +237,13 @@
             loadDbRecords(currentPage);
         });
 
-        // Fetch Historical Data functionality
-        const fetchHistoricalBtn = document.getElementById('fetch-historical-btn');
-        const fetchProgress = document.getElementById('fetch-progress');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-
-        fetchHistoricalBtn.addEventListener('click', async () => {
-            if (!confirm('Cette action va récupérer jusqu\'à 8000 enregistrements historiques depuis ThingSpeak et écraser les données existantes. Cela peut prendre du temps. Continuer ?')) {
-                return;
-            }
-
-            fetchHistoricalBtn.disabled = true;
-            fetchHistoricalBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-            fetchHistoricalBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'active:bg-blue-800');
-            fetchHistoricalBtn.textContent = 'Récupération en cours...';
-
-            // Show progress bar
-            fetchProgress.classList.remove('hidden');
-            progressBar.style.width = '0%';
-            progressText.textContent = '0%';
-
-            // Animate progress bar over estimated time (30 seconds)
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += Math.random() * 5; // Random increment for realism
-                if (progress > 90) progress = 90; // Cap at 90% until response
-                progressBar.style.width = progress + '%';
-                progressText.textContent = Math.round(progress) + '%';
-            }, 500);
-
-            try {
-                const response = await fetch(`${basePath}api/diagnostic/fetch-historical`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                const result = await response.json();
-
-                clearInterval(progressInterval);
-                progressBar.style.width = '100%';
-                progressText.textContent = '100%';
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Erreur inconnue');
-                }
-
-                alert('Historique récupéré avec succès !\n' + result.message);
-                // Reload page to reflect changes
-                window.location.reload();
-
-            } catch (error) {
-                clearInterval(progressInterval);
-                progressBar.style.width = '0%';
-                progressText.textContent = 'Erreur';
-                console.error('Erreur lors de la récupération:', error);
-                alert('Erreur lors de la récupération de l\'historique: ' + error.message);
-            } finally {
-                fetchHistoricalBtn.disabled = false;
-                fetchHistoricalBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                fetchHistoricalBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'active:bg-blue-800');
-                fetchHistoricalBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Récupérer l\'historique (max 8000)';
-                // Hide progress after a delay
-                setTimeout(() => {
-                    fetchProgress.classList.add('hidden');
-                }, 2000);
-            }
-        });
-
-        // Reset Database functionality
-        const resetDatabaseBtn = document.getElementById('reset-database-btn');
-        resetDatabaseBtn.addEventListener('click', async () => {
-            if (!confirm('⚠️ Attention ! Cette action va supprimer TOUTES les données de consommation et les paramètres. Cette action est irréversible.\n\nÊtes-vous sûr de vouloir continuer ?')) {
-                return;
-            }
-
-            resetDatabaseBtn.disabled = true;
-            resetDatabaseBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-            resetDatabaseBtn.classList.remove('bg-red-600', 'hover:bg-red-700', 'active:bg-red-800');
-
-            try {
-                const response = await fetch(`${basePath}api/reset-database`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la réinitialisation de la base de données');
-                }
-
-                alert('Base de données réinitialisée avec succès !');
-                // Reload page to reflect changes
-                window.location.reload();
-
-            } catch (error) {
-                console.error('Erreur lors de la réinitialisation:', error);
-                alert('Erreur lors de la réinitialisation de la base de données: ' + error.message);
-            } finally {
-                resetDatabaseBtn.disabled = false;
-                resetDatabaseBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                resetDatabaseBtn.classList.add('bg-red-600', 'hover:bg-red-700', 'active:bg-red-800');
-            }
-        });
-
         // Initial load of DB records
         loadDbRecords();
+
+        // Auto refresh every 15 seconds
+        setInterval(() => {
+            window.location.reload();
+        }, 15000);
     });
 </script>
 {% endblock %}

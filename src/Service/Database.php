@@ -63,8 +63,21 @@ class Database
 
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS settings (
-                  `key` VARCHAR(255) PRIMARY KEY,
-                  value TEXT
+                   `key` VARCHAR(255) PRIMARY KEY,
+                   value TEXT
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS alerts_log (
+                   id INT AUTO_INCREMENT PRIMARY KEY,
+                   type VARCHAR(50) NOT NULL COMMENT 'Type d''alerte (power, daily)',
+                   severity ENUM('high','critical') NOT NULL COMMENT 'Sévérité',
+                   title VARCHAR(255) NOT NULL COMMENT 'Titre de l''alerte',
+                   message TEXT NOT NULL COMMENT 'Message détaillé',
+                   value DECIMAL(10,2) DEFAULT NULL COMMENT 'Valeur associée',
+                   threshold DECIMAL(10,2) DEFAULT NULL COMMENT 'Seuil dépassé',
+                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ");
         } catch (PDOException $e) {

@@ -27,10 +27,14 @@ use Statelec\Controller\AlertsController;
 use Statelec\Controller\AnalysisController;
 use Statelec\Controller\DiagnosticController;
 use Statelec\Controller\HistoriqueController;
+use Statelec\Controller\ApiController;
 
 // Charger les variables d'environnement
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
+
+// Définir le fuseau horaire (configurable via .env)
+date_default_timezone_set($_ENV['TIMEZONE'] ?? 'Europe/Paris');
 
 // Initialiser Twig
 $loader = new FilesystemLoader(dirname(__DIR__) . '/templates');
@@ -48,8 +52,35 @@ if (substr($basePath, -1) !== '/') {
     $basePath .= '/';
 }
 
+// Supprimer la query string
+if (($pos = strpos($requestUri, '?')) !== false) {
+    $requestUri = substr($requestUri, 0, $pos);
+}
+
+// Supprimer le base path de l'URL
+if ($basePath !== '/' && strpos($requestUri, $basePath) === 0) {
+    $requestUri = substr($requestUri, strlen($basePath));
+}
+if ($requestUri === '') $requestUri = '/';
+
 // Ajouter le basePath comme variable globale à Twig
 $twig->addGlobal('basePath', $basePath);
+
+// Fonction helper pour gérer les routes de pages avec gestion d'erreur DB
+function handlePageRoute($twig, $controllerClass, $method, $template) {
+    try {
+        $controller = new $controllerClass();
+        $data = $controller->$method();
+
+        if (isset($data['db_error']) && $data['db_error']) {
+            echo $twig->render('pages/db_error.twig', $data);
+        } else {
+            echo $twig->render($template, $data);
+        }
+    } catch (Exception $e) {
+        echo $twig->render('pages/db_error.twig', ['basePath' => $GLOBALS['basePath'] ?? '/']);
+    }
+}
 
 // Définir le thème par défaut (le JavaScript le gérera dynamiquement)
 $twig->addGlobal('theme', 'light');
@@ -86,6 +117,9 @@ if (strpos($requestUri, '/api/') === 0) {
     } elseif ($requestUri === '/api/consumption' && $method === 'POST') {
         $controller = new ConsumptionController();
         $controller->saveConsumptionData();
+    } elseif ($requestUri === '/api/data' && $method === 'GET') {
+        $controller = new ApiController();
+        $controller->receiveData();
     } elseif ($requestUri === '/api/consumption/count' && $method === 'GET') {
         $controller = new ConsumptionController();
         $controller->countRecords();
@@ -101,9 +135,6 @@ if (strpos($requestUri, '/api/') === 0) {
     } elseif (preg_match('/^\/api\/settings\/(.+)$/', $requestUri, $matches) && $method === 'POST') {
         $controller = new SettingsController();
         $controller->saveSetting($matches[1]);
-    } elseif ($requestUri === '/api/reset-database' && $method === 'POST') {
-        $controller = new SystemController();
-        $controller->resetDatabase();
     } elseif ($requestUri === '/api/status' && $method === 'GET') {
         $controller = new SystemController();
         $controller->getStatus();
@@ -124,102 +155,25 @@ if (strpos($requestUri, '/api/') === 0) {
 switch ($requestUri) {
     case '/':
     case '/dashboard':
-        try {
-            $controller = new DashboardController();
-            $data = $controller->showDashboard();
-            
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/dashboard.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, DashboardController::class, 'showDashboard', 'pages/dashboard.twig');
         break;
     case '/historique':
-        try {
-            $controller = new HistoriqueController();
-            $data = $controller->showHistorique();
-
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/historique.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, HistoriqueController::class, 'showHistorique', 'pages/historique.twig');
         break;
     case '/cout':
-        try {
-            $controller = new CostController();
-            $data = $controller->showCost();
-
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/cout.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, CostController::class, 'showCost', 'pages/cout.twig');
         break;
     case '/alertes':
-        try {
-            $controller = new AlertsController();
-            $data = $controller->showAlerts();
-
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/alertes.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, AlertsController::class, 'showAlerts', 'pages/alertes.twig');
         break;
     case '/analyse':
-        try {
-            $controller = new AnalysisController();
-            $data = $controller->showAnalysis();
-
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/analyse.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, AnalysisController::class, 'showAnalysis', 'pages/analyse.twig');
         break;
     case '/parametres':
-        try {
-            $controller = new SettingsController();
-            $data = $controller->showSettings();
-            
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/parametres.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, SettingsController::class, 'showSettings', 'pages/parametres.twig');
         break;
     case '/diagnostic':
-        try {
-            $controller = new DiagnosticController();
-            $data = $controller->showDiagnostic();
-
-            if (isset($data['db_error']) && $data['db_error']) {
-                echo $twig->render('pages/db_error.twig', $data);
-            } else {
-                echo $twig->render('pages/diagnostic.twig', $data);
-            }
-        } catch (Exception $e) {
-            echo $twig->render('pages/db_error.twig', ['basePath' => $_ENV['BASE_PATH'] ?? '/']);
-        }
+        handlePageRoute($twig, DiagnosticController::class, 'showDiagnostic', 'pages/diagnostic.twig');
         break;
     // Ajoutez d'autres routes ici au fur et à mesure
     case '/error':

@@ -52,8 +52,7 @@ class AnalysisController
             'page_title' => 'Analyse',
             'currentPage' => 'analyse',
             'analysisData' => $data['analysisData'],
-            'config' => $config,
-            'theme' => 'light' // TODO: Implement theme switching
+            'config' => $config
         ];
     }
 
@@ -64,7 +63,7 @@ class AnalysisController
         }
 
         // Fetch consumption data for the last 30 days
-        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $now = new DateTime('now', new DateTimeZone($_ENV['TIMEZONE'] ?? 'Europe/Paris'));
         $thirtyDaysAgo = (clone $now)->modify('-30 days');
 
         $stmt = $this->pdo->prepare("SELECT timestamp, hchc, hchp FROM consumption_data WHERE timestamp >= ? ORDER BY timestamp ASC");

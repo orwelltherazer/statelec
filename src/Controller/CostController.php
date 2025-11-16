@@ -54,8 +54,7 @@ class CostController
             'costData' => $data['costData'],
             'totalCost' => $data['totalCost'],
             'averageDailyCost' => $data['averageDailyCost'],
-            'config' => $config,
-            'theme' => 'light' // TODO: Implement theme switching
+            'config' => $config
         ];
     }
 

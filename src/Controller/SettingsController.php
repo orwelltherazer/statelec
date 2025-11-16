@@ -29,8 +29,7 @@ class SettingsController
                 'page_title' => 'Paramètres',
                 'currentPage' => 'parametres',
                 'db_error' => true,
-                'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'basePath' => $_ENV['BASE_PATH'] ?? '/'
             ];
         }
 
@@ -38,8 +37,7 @@ class SettingsController
         return [
             'page_title' => 'Paramètres',
             'currentPage' => 'parametres',
-            'settings' => $settings,
-            'theme' => 'light' // TODO: Implement theme switching
+            'settings' => $settings
         ];
     }
 
