@@ -78,7 +78,7 @@ BASE_PATH=/statelec
 
  L'application fonctionne avec un module de lecture TIC installé sur le compteur Linky. Ce module transmet directement les données de consommation électrique vers l'API de Statelec.
 
- Les détails de la réalisation du module de collecte des données seront ajoutés prochainement.
+ Les détails de la réalisation du module TIC sont disponibles sur : https://github.com/orwelltherazer/LinkyMonitor
 
  La vérification des alertes se fait via le script cron :
  - `cron/alert_cron.php` : Vérification des seuils d'alerte
