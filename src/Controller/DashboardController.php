@@ -46,7 +46,7 @@ class DashboardController
 
         try {
             // Fetch consumption data for the last 24 hours
-            $stmt = $this->pdo->query("SELECT timestamp, papp, hchc, hchp, ptec FROM consumption_data WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY timestamp ASC");
+            $stmt = $this->pdo->query("SELECT timestamp, papp, hchc, hchp, ptec FROM consumption_data WHERE timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 24 HOUR) ORDER BY timestamp ASC");
             $historicalData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($historicalData)) {
@@ -138,6 +138,22 @@ class DashboardController
                         $lastSampleTime = $dataTime;
                     }
                 }
+
+                // Ensure the very last data point is included for chart completeness
+                $lastDataPoint = end($last24h);
+                if (!empty($lastDataPoint)) {
+                    $isLastPointInSampled = false;
+                    if (!empty($sampledData)) {
+                        $lastSampledPoint = end($sampledData);
+                        if ($lastSampledPoint['timestamp'] === $lastDataPoint['timestamp']) {
+                            $isLastPointInSampled = true;
+                        }
+                    }
+
+                    if (!$isLastPointInSampled) {
+                        $sampledData[] = $lastDataPoint;
+                    }
+                }
             }
 
             $chartData = [];
@@ -145,13 +161,17 @@ class DashboardController
                 $firstChartData = $sampledData[0];
                 $firstHC = (float)$firstChartData['hchc'];
                 $firstHP = (float)$firstChartData['hchp'];
+                $appTimezone = new DateTimeZone($_ENV['TIMEZONE'] ?? 'Europe/Paris');
 
                 foreach ($sampledData as $d) {
                     $hcConsumption = round((float)$d['hchc'] - $firstHC, 2);
                     $hpConsumption = round((float)$d['hchp'] - $firstHP, 2);
 
+                    $timestamp = new DateTime($d['timestamp']); // Automatically parsed as UTC
+                    $timestamp->setTimezone($appTimezone); // Convert to local timezone
+
                     $chartData[] = [
-                        'time' => (new DateTime($d['timestamp']))->format('H:i'),
+                        'time' => $timestamp->format('H:i'),
                         'indexHc' => $hcConsumption,
                         'indexHp' => $hpConsumption
                     ];

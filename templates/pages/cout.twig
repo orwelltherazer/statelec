@@ -264,8 +264,8 @@
                     const first = firstRecordOfDay[date];
                     const last = dailyAggregates[date];
 
-                    const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
-                    const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+                    const consoHC = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+                    const consoHP = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
 
                     const costHC = consoHC * prixHC;
                     const costHP = consoHP * prixHP;
@@ -297,8 +297,8 @@
                     const first = firstRecordOfDay[date];
                     const last = dailyAggregates[date];
 
-                    const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
-                    const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+                    const consoHC = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
+                    const consoHP = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
 
                     const costHC = consoHC * prixHC;
                     const costHP = consoHP * prixHP;
