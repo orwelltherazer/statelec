@@ -5,6 +5,7 @@
 # Logs
 *.log
 logs/
+!logs/.gitkeep
 
 # Specific cron logs (if needed)
 cron/alert_cron.php.log
@@ -18,8 +19,11 @@ database/*.sql
 
 # Cache and temporary files
 cache/
+!cache/.gitkeep
 tmp/
 temp/
+storage/
+!storage/.gitkeep
 
 # IDE files
 .vscode/
@@ -45,8 +49,18 @@ sessions/
 uploads/
 public/uploads/
 
-# Apache config files
-**/.htaccess
+# PHPUnit coverage
+coverage/
+.phpunit.result.cache
+
+# Exports
+storage/exports/*.csv
+storage/exports/*.xlsx
+storage/exports/*.pdf
+storage/exports/*.json
+
+# Apache config files (keep public/.htaccess)
+# **/.htaccess
 
 # Backup files
 *.bak
