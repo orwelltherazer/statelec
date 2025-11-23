@@ -1,0 +1,138 @@
+{% extends "base.twig" %}
+
+{% block title %}Mon Profil - Statelec{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        Mon Profil
+    </h1>
+
+    {% if success %}
+    <div class="bg-green-50 dark:bg-green-900 border-l-4 border-green-500 p-4 mb-6">
+        <p class="text-sm text-green-700 dark:text-green-200">{{ success }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="bg-red-50 dark:bg-red-900 border-l-4 border-red-500 p-4 mb-6">
+        <p class="text-sm text-red-700 dark:text-red-200">{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Informations du profil -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Informations
+            </h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nom
+                    </label>
+                    <p class="mt-1 text-gray-900 dark:text-white">{{ user.name }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Email
+                    </label>
+                    <p class="mt-1 text-gray-900 dark:text-white">{{ user.email }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Rôle
+                    </label>
+                    <p class="mt-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            {% if user.role == 'admin' %}bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200{% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200{% endif %}">
+                            {{ user.role == 'admin' ? 'Administrateur' : 'Utilisateur' }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Changement de mot de passe -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Changer le mot de passe
+            </h2>
+
+            <form action="/profile/change-password" method="POST" class="space-y-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div>
+                    <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Mot de passe actuel
+                    </label>
+                    <input
+                        type="password"
+                        id="current_password"
+                        name="current_password"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white"
+                    >
+                </div>
+
+                <div>
+                    <label for="new_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Nouveau mot de passe
+                    </label>
+                    <input
+                        type="password"
+                        id="new_password"
+                        name="new_password"
+                        required
+                        minlength="8"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white"
+                    >
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Minimum 8 caractères</p>
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Confirmer le nouveau mot de passe
+                    </label>
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white"
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                >
+                    Modifier le mot de passe
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <a href="/dashboard" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+            ← Retour au dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+// Validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+
+    if (newPassword !== confirmPassword) {
+        e.preventDefault();
+        alert('Les mots de passe ne correspondent pas');
+    }
+});
+</script>
+{% endblock %}

@@ -214,14 +214,14 @@ return [
      * Feature flags - Activation progressive des fonctionnalités
      */
     'features' => [
-        'authentication' => false, // Phase 2
+        'authentication' => true, // Phase 2 - ACTIVÉ
         'advanced_dashboard' => false, // Phase 3-5
         'realtime_updates' => false, // Phase 7
         'advanced_alerts' => false, // Phase 8
         'api_v1' => false, // Phase 9
         'export' => false, // Phase 9
         'pwa' => false, // Phase 10
-        'multi_user' => false, // Phase 2
+        'multi_user' => true, // Phase 2 - ACTIVÉ
     ],
 
     /**

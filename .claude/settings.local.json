@@ -5,7 +5,9 @@
       "Bash(git checkout:*)",
       "Bash(composer require:*)",
       "Bash(php tests/phase1_validation.php:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat(infrastructure): Phase 1 - Mise en place infrastructure V2\n\n- Création branche evolution\n- Structure de dossiers complète (config, logs, cache, storage, tests)\n- Migration BDD v2_schema.sql avec 13 nouvelles tables\n- Configuration centralisée avec feature flags\n- Service de logging professionnel (Monolog)\n- Bootstrap avec gestion d''erreurs avancée\n- Script de validation Phase 1\n- Documentation complète (PHASE1_INFRASTRUCTURE.md, CHANGELOG.md)\n\nTables créées: users, user_preferences, events, daily_stats, hourly_stats,\ndevices_detected, predictions, anomalies, base_load_history, export_jobs,\napi_tokens, sessions, notifications\n\nDépendances: + monolog/monolog ^3.0\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

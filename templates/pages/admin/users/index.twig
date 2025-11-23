@@ -1,0 +1,98 @@
+{% extends "base.twig" %}
+
+{% block title %}Gestion des utilisateurs - Admin{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            Gestion des utilisateurs
+        </h1>
+        <a href="/admin/users/create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+            + Nouvel utilisateur
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Total</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.total }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Actifs</p>
+            <p class="text-2xl font-bold text-green-600">{{ stats.active }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Admins</p>
+            <p class="text-2xl font-bold text-purple-600">{{ stats.admins }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Connexions 24h</p>
+            <p class="text-2xl font-bold text-blue-600">{{ stats.recent_logins }}</p>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-900">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nom</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Rôle</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Dernière connexion</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for user in users %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ user.name }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ user.email }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="inline-flex px-2 py-1 text-xs rounded-full
+                            {% if user.role == 'admin' %}bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
+                            {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200{% endif %}">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="inline-flex px-2 py-1 text-xs rounded-full
+                            {% if user.is_active %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                            {% else %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200{% endif %}">
+                            {{ user.is_active ? 'Actif' : 'Inactif' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        {{ user.last_login ? user.last_login|date('d/m/Y H:i') : 'Jamais' }}
+                    </td>
+                    <td class="px-6 py-4 text-sm space-x-2">
+                        <a href="/admin/users/edit/{{ user.id }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">Modifier</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Aucun utilisateur
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="mt-4 flex justify-center space-x-2">
+        {% for page in 1..total_pages %}
+        <a href="?page={{ page }}"
+           class="px-3 py-1 rounded {% if page == current_page %}bg-blue-600 text-white{% else %}bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600{% endif %}">
+            {{ page }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

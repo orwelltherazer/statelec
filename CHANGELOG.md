@@ -9,6 +9,75 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### [2.0.0] - 2025-11-23
 
+#### Phase 2 - Authentification & Sécurité
+
+##### Ajouté
+
+- **Système d'authentification complet** :
+  - Login/Logout/Register
+  - Gestion de sessions sécurisées
+  - Protection CSRF sur tous les formulaires
+  - Rate limiting (login, API, global)
+  - Régénération automatique d'ID de session
+
+- **Services d'authentification** :
+  - `AuthService.php` - Authentification centrale (login, register, sessions, CSRF)
+  - `UserService.php` - Gestion CRUD utilisateurs avec statistiques
+
+- **Middlewares de sécurité** :
+  - `AuthMiddleware.php` - Protection des routes (requireAuth, requireAdmin, requireGuest)
+  - `RateLimitMiddleware.php` - Limitation de taux avec détection IP intelligente
+
+- **Contrôleurs** :
+  - `BaseController.php` - Contrôleur parent avec méthodes utilitaires
+  - `AuthController.php` - Gestion authentification (7 routes)
+  - `UserController.php` - Administration utilisateurs (9 routes)
+
+- **Templates d'authentification** :
+  - `login.twig` - Page de connexion responsive
+  - `register.twig` - Page d'inscription avec validation
+  - `profile.twig` - Profil utilisateur et changement mot de passe
+  - `admin/users/index.twig` - Liste utilisateurs avec stats
+
+- **Routeur d'authentification** :
+  - `Router.php` - Routeur spécialisé compatible avec l'existant
+  - 13 routes d'authentification
+  - Injection variables Twig globales
+
+- **Documentation** :
+  - `docs/PHASE2_AUTHENTIFICATION.md` - Documentation complète Phase 2
+  - `docs/INTEGRATION_PHASE2.md` - Guide d'intégration pas à pas
+
+##### Sécurité
+
+- ✅ Mots de passe hashés (bcrypt, cost 10)
+- ✅ Protection CSRF généralisée
+- ✅ Rate limiting (5 tentatives login/15min)
+- ✅ Sessions sécurisées (HttpOnly, Secure, SameSite)
+- ✅ Validation email et sanitization
+- ✅ Protection dernier admin (ne peut être supprimé)
+- ✅ Logging tentatives connexion et actions admin
+- ✅ Stockage sessions en BDD
+
+##### Fonctionnalités
+
+- Authentification multi-utilisateurs
+- Rôles : admin et user
+- Gestion complète des utilisateurs (CRUD)
+- Recherche d'utilisateurs
+- Statistiques utilisateurs
+- Préférences utilisateur personnalisées
+- Activation/désactivation de comptes
+- Réinitialisation mot de passe (admin)
+- Profil utilisateur avec changement mot de passe
+
+##### Configuration
+
+- Feature flags `authentication` et `multi_user` activés
+- Configuration sécurité complète dans `config/app.php`
+- Rate limits configurables
+- Politique de mots de passe configurable
+
 #### Phase 1 - Infrastructure
 
 ##### Ajouté
