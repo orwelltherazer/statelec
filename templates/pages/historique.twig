@@ -129,11 +129,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://unpkg.com/chartjs-plugin-zoom@latest/dist/chartjs-plugin-zoom.min.js"></script>
-<script>
-// Enregistrer le plugin zoom avec Chart.js
-Chart.register(ChartZoom);
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const basePath = "{{ basePath }}";
@@ -380,33 +376,41 @@ Chart.register(ChartZoom);
                              pan: {
                                  enabled: true,
                                  mode: 'x',
-                                 threshold: 10,
-                                 modifierKey: null
+                                 threshold: 5,
+                                 onPanComplete: ({chart}) => {
+                                     // Show reset button when panning
+                                     if (periode === 'jour') {
+                                         resetZoomPowerBtn.classList.remove('hidden');
+                                     }
+                                 }
                              },
                              zoom: {
                                  wheel: {
-                                     enabled: true
+                                     enabled: true,
+                                     speed: 0.1
                                  },
                                  pinch: {
                                      enabled: true
                                  },
-                                 mode: 'x'
+                                 drag: {
+                                     enabled: false  // Désactiver le zoom par sélection
+                                 },
+                                 mode: 'x',
+                                 onZoomComplete: ({chart}) => {
+                                     // Show reset button when zooming
+                                     if (periode === 'jour') {
+                                         resetZoomPowerBtn.classList.remove('hidden');
+                                     }
+                                 }
+                             },
+                             limits: {
+                                 x: {min: 'original', max: 'original'}
                              }
                          }
                      }
                   }
              });
 
-              // Add zoom event listener after chart creation (only once)
-              if (!powerChart.canvas.hasZoomListener) {
-                  // Écouter les événements de zoom du plugin pour afficher le bouton reset
-                  powerChart.options.plugins.zoom.zoom.onZoomComplete = () => {
-                      if (periode === 'jour') {
-                          resetZoomPowerBtn.classList.remove('hidden');
-                      }
-                  };
-                  powerChart.canvas.hasZoomListener = true;
-              }
 
               // Hide reset button if not in jour mode
               if (periode !== 'jour') {

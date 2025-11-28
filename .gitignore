@@ -52,3 +52,6 @@ public/uploads/
 *.bak
 *.backup
 *~
+
+# Test
+test/
