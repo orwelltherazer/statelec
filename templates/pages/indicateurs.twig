@@ -1,0 +1,507 @@
+{% extends "base.twig" %}
+
+{% block title %}Indicateurs Électriques - Statelec{% endblock %}
+
+{% block content %}
+<main class="p-4 sm:p-6 space-y-6">
+    <!-- En-tête avec sélecteur de période -->
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold">Indicateurs Électriques</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mesures fiables basées sur les données brutes du capteur</p>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    data-periode="jour"
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'jour' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
+                >
+                    Jour
+                </button>
+                <button
+                    data-periode="semaine"
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'semaine' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
+                >
+                    Semaine
+                </button>
+                <button
+                    data-periode="mois"
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'mois' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
+                >
+                    Mois
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Mesures électriques brutes -->
+    <section id="mesures-brutes">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1. Mesures électriques brutes</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Puissance instantanée -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    <span class="text-sm font-medium">Puissance instantanée</span>
+                </div>
+                <div id="puissance-instantanee" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.puissance_instantanee }} W
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Temps réel
+                </div>
+            </div>
+
+            <!-- Puissance max jour -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span class="text-sm font-medium">Puissance max (jour)</span>
+                </div>
+                <div id="puissance-max-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.puissance_max.jour }} W
+                </div>
+            </div>
+
+            <!-- Puissance max semaine -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span class="text-sm font-medium">Puissance max (semaine)</span>
+                </div>
+                <div id="puissance-max-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.puissance_max.semaine }} W
+                </div>
+            </div>
+
+            <!-- Puissance max mois -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span class="text-sm font-medium">Puissance max (mois)</span>
+                </div>
+                <div id="puissance-max-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.puissance_max.mois }} W
+                </div>
+            </div>
+        </div>
+
+        <!-- Énergie consommée -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Énergie (jour)</span>
+                </div>
+                <div id="energie-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.energie_consommee.jour }} kWh
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Énergie (semaine)</span>
+                </div>
+                <div id="energie-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.energie_consommee.semaine }} kWh
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Énergie (mois)</span>
+                </div>
+                <div id="energie-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.mesures_brutes.energie_consommee.mois }} kWh
+                </div>
+            </div>
+        </div>
+
+        <!-- Courbe temporelle -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Courbe de puissance</h3>
+            <div style="width: 100%; height: 300px;">
+                <canvas id="courbeTemporelleChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Stats temporelles -->
+    <section id="stats-temporelles" class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2. Statistiques temporelles</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- Consommation nocturne -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Consommation nocturne (00h-06h)</span>
+                </div>
+                <div id="conso-nocturne" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.stats_temporelles.conso_nocturne }} W
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Moyenne sur la période
+                </div>
+            </div>
+
+            <!-- Périodes de pointe -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Heures de pointe</span>
+                </div>
+                <div id="periodes-pointe" class="text-2xl font-bold text-gray-900 dark:text-white">
+                    {% if indicateurs.stats_temporelles.periodes_pointe.pointe is not empty %}
+                        {% for heure in indicateurs.stats_temporelles.periodes_pointe.pointe %}
+                            {{ heure }}h{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Plages horaires avec consommation élevée
+                </div>
+            </div>
+        </div>
+
+        <!-- Profil journalier -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profil moyen journalier</h3>
+            <div style="width: 100%; height: 300px;">
+                <canvas id="profilJournalierChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Événements électriques -->
+    <section id="evenements" class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3. Détection d'événements électriques vérifiables</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Basés sur des variations franches du signal, pas des appareils supposés</p>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-gray-400">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <p class="text-lg font-medium mb-2">Détection d'événements en cours de développement</p>
+                <p class="text-sm">Les fonctionnalités suivantes seront bientôt disponibles :</p>
+                <ul class="text-sm mt-4 space-y-2 max-w-md mx-auto text-left">
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-500 mt-1">•</span>
+                        <span><strong>Sauts de puissance</strong> : Détection des montées/descentes > X W</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-500 mt-1">•</span>
+                        <span><strong>Anomalies de charge</strong> : Pics anormaux par rapport aux moyennes historiques</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-500 mt-1">•</span>
+                        <span><strong>Consommation continue élevée</strong> : Plateau > seuil paramétré</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Gaspillage -->
+    <section id="gaspillage" class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">4. Indicateurs de gaspillage</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Veille globale -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span class="text-sm font-medium">Veille globale</span>
+                </div>
+                <div id="veille-globale" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.gaspillage.veille_globale }} W
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Consommation de fond permanente
+                </div>
+            </div>
+
+            <!-- Base nocturne -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Base nocturne (02h-05h)</span>
+                </div>
+                <div id="base-nocturne" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.gaspillage.base_nocturne }} W
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Équipements permanents
+                </div>
+            </div>
+
+            <!-- Écart week-end -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Écart semaine/week-end</span>
+                </div>
+                <div id="ecart-weekend" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {% if indicateurs.gaspillage.ecart_weekend.ecart_pourcent is not null %}
+                        {{ indicateurs.gaspillage.ecart_weekend.ecart_pourcent }}%
+                    {% else %}
+                        <span class="text-gray-400 text-2xl">N/A</span>
+                    {% endif %}
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Variation de consommation
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Coût -->
+    <section id="cout" class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">5. Coût</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Coût jour -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Coût (jour)</span>
+                </div>
+                <div id="cout-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.cout.couts.jour }}€
+                </div>
+            </div>
+
+            <!-- Coût semaine -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Coût (semaine)</span>
+                </div>
+                <div id="cout-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.cout.couts.semaine }}€
+                </div>
+            </div>
+
+            <!-- Coût mois -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Coût (mois)</span>
+                </div>
+                <div id="cout-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.cout.couts.mois }}€
+                </div>
+            </div>
+
+            <!-- Coût projeté -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    <span class="text-sm font-medium">Projection fin de mois</span>
+                </div>
+                <div id="cout-projete" class="text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ indicateurs.cout.cout_projete }}€
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePath = "{{ basePath }}";
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        let currentPeriode = "{{ periode }}";
+
+        // Boutons de période
+        const periodeBtns = document.querySelectorAll('.periode-btn');
+        periodeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentPeriode = this.dataset.periode;
+                updatePeriodeButtons();
+                loadIndicateurs();
+            });
+        });
+
+        function updatePeriodeButtons() {
+            periodeBtns.forEach(btn => {
+                if (btn.dataset.periode === currentPeriode) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                }
+            });
+        }
+
+        async function loadIndicateurs() {
+            try {
+                const response = await fetch(`${basePath}api/indicateurs?periode=${currentPeriode}`);
+                if (!response.ok) throw new Error('Erreur de chargement');
+                
+                const data = await response.json();
+                updateUI(data);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        function updateUI(data) {
+            // Mettre à jour les valeurs
+            document.getElementById('puissance-instantanee').textContent = data.mesures_brutes.puissance_instantanee + ' W';
+            document.getElementById('puissance-max-jour').textContent = data.mesures_brutes.puissance_max.jour + ' W';
+            document.getElementById('puissance-max-semaine').textContent = data.mesures_brutes.puissance_max.semaine + ' W';
+            document.getElementById('puissance-max-mois').textContent = data.mesures_brutes.puissance_max.mois + ' W';
+            
+            document.getElementById('energie-jour').textContent = data.mesures_brutes.energie_consommee.jour + ' kWh';
+            document.getElementById('energie-semaine').textContent = data.mesures_brutes.energie_consommee.semaine + ' kWh';
+            document.getElementById('energie-mois').textContent = data.mesures_brutes.energie_consommee.mois + ' kWh';
+            
+            document.getElementById('conso-nocturne').textContent = data.stats_temporelles.conso_nocturne + ' W';
+            
+            document.getElementById('veille-globale').textContent = data.gaspillage.veille_globale + ' W';
+            document.getElementById('base-nocturne').textContent = data.gaspillage.base_nocturne + ' W';
+            
+            const ecart = data.gaspillage.ecart_weekend.ecart_pourcent;
+            const ecartEl = document.getElementById('ecart-weekend');
+            if (ecart !== null) {
+                ecartEl.textContent = ecart + '%';
+                ecartEl.classList.remove('text-gray-400', 'text-2xl');
+                ecartEl.classList.add('text-3xl', 'font-bold');
+            } else {
+                ecartEl.innerHTML = '<span class="text-gray-400 text-2xl">N/A</span>';
+            }
+            
+            document.getElementById('cout-jour').textContent = data.cout.couts.jour + '€';
+            document.getElementById('cout-semaine').textContent = data.cout.couts.semaine + '€';
+            document.getElementById('cout-mois').textContent = data.cout.couts.mois + '€';
+            document.getElementById('cout-projete').textContent = data.cout.cout_projete + '€';
+
+            // Mettre à jour les graphiques
+            updateCharts(data);
+        }
+
+        let courbeChart, profilChart;
+
+        function updateCharts(data) {
+            // Courbe temporelle
+            if (courbeChart) courbeChart.destroy();
+            const ctxCourbe = document.getElementById('courbeTemporelleChart').getContext('2d');
+            courbeChart = new Chart(ctxCourbe, {
+                type: 'line',
+                data: {
+                    labels: data.mesures_brutes.courbe_temporelle.map(d => new Date(d.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })),
+                    datasets: [{
+                        label: 'Puissance (W)',
+                        data: data.mesures_brutes.courbe_temporelle.map(d => d.papp),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }, ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' } },
+                        y: { beginAtZero: true, grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }, ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } }
+                    }
+                }
+            });
+
+            // Profil journalier
+            if (profilChart) profilChart.destroy();
+            const ctxProfil = document.getElementById('profilJournalierChart').getContext('2d');
+            profilChart = new Chart(ctxProfil, {
+                type: 'bar',
+                data: {
+                    labels: data.stats_temporelles.profil_journalier.map(d => d.heure + 'h'),
+                    datasets: [{
+                        label: 'Puissance moyenne (W)',
+                        data: data.stats_temporelles.profil_journalier.map(d => d.puissance),
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }, ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' } },
+                        y: { beginAtZero: true, grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }, ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } }
+                    }
+                }
+            });
+        }
+
+        // Chargement initial
+        loadIndicateurs();
+
+        // Mise à jour automatique toutes les 30 secondes
+        setInterval(loadIndicateurs, 30000);
+    });
+</script>
+{% endblock %}
