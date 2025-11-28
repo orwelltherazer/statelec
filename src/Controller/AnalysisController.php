@@ -26,7 +26,7 @@ class AnalysisController
                 'currentPage' => 'analyse',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
             ];
         }
 
@@ -52,7 +52,8 @@ class AnalysisController
             'page_title' => 'Analyse',
             'currentPage' => 'analyse',
             'analysisData' => $data['analysisData'],
-            'config' => $config
+            'config' => $config,
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ];
     }
 

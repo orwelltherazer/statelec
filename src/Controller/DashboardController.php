@@ -34,7 +34,7 @@ class DashboardController
         return array_merge([
             'page_title' => 'Dashboard',
             'currentPage' => 'dashboard',
-            'theme' => 'light' // TODO: Implement theme switching
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ], $data);
     }
 
@@ -45,8 +45,8 @@ class DashboardController
         }
 
         try {
-            // Fetch consumption data for the last 24 hours
-            $stmt = $this->pdo->query("SELECT timestamp, papp, hchc, hchp, ptec FROM consumption_data WHERE timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 24 HOUR) ORDER BY timestamp ASC");
+            // Fetch consumption data for the last 48 hours to allow comparison
+            $stmt = $this->pdo->query("SELECT timestamp, papp, hchc, hchp, ptec FROM consumption_data WHERE timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 48 HOUR) ORDER BY timestamp ASC");
             $historicalData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($historicalData)) {
@@ -97,10 +97,42 @@ class DashboardController
             $consoDuJour = round($conso24hHC + $conso24hHP, 2);
             $consoHier = round($consoHierHC + $consoHierHP, 2);
             
-            // Default prices from original React app
-            $prixHC = 0.1821;
-            $prixHP = 0.2460;
-            $coutEstime = round($conso24hHP * $prixHP + $conso24hHC * $prixHC, 2);
+            // Fetch prices from settings
+            $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prixHC', 'prixHP', 'prix_hc', 'prix_hp', 'subscription_type', 'subscription_price', 'prixBase')");
+            $rawSettings = $settingsStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $settings = [];
+            foreach ($rawSettings as $key => $value) {
+                $settings[$key] = json_decode($value, true);
+            }
+
+            $prixHC = isset($settings['prixHC']) ? (float)$settings['prixHC'] : (isset($settings['prix_hc']) ? (float)$settings['prix_hc'] : 0.1821);
+            $prixHP = isset($settings['prixHP']) ? (float)$settings['prixHP'] : (isset($settings['prix_hp']) ? (float)$settings['prix_hp'] : 0.2460);
+            $prixBase = isset($settings['prixBase']) ? (float)$settings['prixBase'] : 0.2000;
+            
+            $subscriptionType = isset($settings['subscription_type']) ? $settings['subscription_type'] : 'hchp';
+            $subscriptionPrice = isset($settings['subscription_price']) ? (float)$settings['subscription_price'] : 0.0;
+            $dailySubscriptionCost = ($subscriptionPrice * 12) / 365;
+
+            if ($subscriptionType === 'base') {
+                $coutBase = ($conso24hHP + $conso24hHC) * $prixBase;
+                $coutHC = 0;
+                $coutHP = 0;
+                $coutEstime = $coutBase;
+            } else {
+                $coutHC = $conso24hHC * $prixHC;
+                $coutHP = $conso24hHP * $prixHP;
+                $coutBase = 0;
+                $coutEstime = $coutHC + $coutHP;
+            }
+            
+            $coutAbo = $dailySubscriptionCost;
+            $coutEstime += $coutAbo;
+            
+            $coutEstime = round($coutEstime, 2);
+            $coutHC = round($coutHC, 2);
+            $coutHP = round($coutHP, 2);
+            $coutBase = round($coutBase, 2);
+            $coutAbo = round($coutAbo, 2);
 
             // Calculate variation vs yesterday
             $variationText = 'Pas de données hier';
@@ -181,6 +213,10 @@ class DashboardController
             return [
                 'consoDuJour' => number_format($consoDuJour, 2, ',', ''),
                 'coutEstime' => number_format($coutEstime, 2, ',', ''),
+                'coutHC' => number_format($coutHC, 2, ',', ''),
+                'coutHP' => number_format($coutHP, 2, ',', ''),
+                'coutBase' => number_format($coutBase, 2, ',', ''),
+                'coutAbo' => number_format($coutAbo, 2, ',', ''),
                 'puissanceMax' => $puissanceMax,
                 'variationText' => $variationText,
                 'variationColor' => $variationColor,
@@ -190,8 +226,7 @@ class DashboardController
                     'hchc' => number_format((float)$currentData['hchc'], 1, ',', ''),
                     'hchp' => number_format((float)$currentData['hchp'], 1, ',', '')
                 ],
-                'chartData' => $chartData,
-                'theme' => 'light' // Default theme, will be dynamic later
+                'chartData' => $chartData
             ];
 
         } catch (Exception $e) {
@@ -211,8 +246,7 @@ class DashboardController
             'conso24hHC' => '0,00',
             'conso24hHP' => '0,00',
             'currentData' => ['hchc' => '0,0', 'hchp' => '0,0'],
-            'chartData' => [],
-            'theme' => 'light'
+            'chartData' => []
         ];
     }
 }

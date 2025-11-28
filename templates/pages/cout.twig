@@ -3,7 +3,7 @@
 {% block title %}Coûts - Statelec{% endblock %}
 
 {% block content %}
-<main class="p-6 sm:p-10 space-y-6">
+<main class="p-4 sm:p-6 space-y-6">
     <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <h2 class="text-xl font-semibold">Analyse des coûts</h2>
@@ -65,7 +65,13 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Abonnement</div>
+                <div id="cout-abo" class="text-3xl font-bold text-purple-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-abo-display"></div>
+            </div>
+
             <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
                 <div class="text-sm text-gray-500 mb-2">Coût Heures Creuses</div>
                 <div id="cout-hc" class="text-3xl font-bold text-blue-500">0.00 €</div>
@@ -235,8 +241,8 @@
 
         function processChartData(data) {
             if (!data || data.length === 0) {
-                updateCharts([], 0, 0);
-                updateStats(0, 0, 0, 0);
+                updateCharts([], 0, 0, 0);
+                updateStats(0, 0, 0, 0, 0, parseFloat(config?.budgetMensuel || 0));
                 return;
             }
 
@@ -244,9 +250,25 @@
             let processedData = [];
             let totalCostHC = 0;
             let totalCostHP = 0;
+            let totalCostAbo = 0;
 
             const prixHC = parseFloat(config?.prixHC || 0.1821);
             const prixHP = parseFloat(config?.prixHP || 0.2460);
+            const prixBase = parseFloat(config?.prixBase || 0.2000);
+            const subscriptionType = config?.subscription_type || 'hchp';
+            const subscriptionPrice = parseFloat(config?.subscription_price || 0);
+            const dailySubscriptionCost = (subscriptionPrice * 12) / 365;
+
+            // Update price displays
+            if (subscriptionType === 'base') {
+                document.getElementById('prix-hc-display').textContent = '-';
+                document.getElementById('prix-hp-display').textContent = `${prixBase.toFixed(4)} €/kWh (Base)`;
+            } else {
+                document.getElementById('prix-hc-display').textContent = `${prixHC.toFixed(4)} €/kWh`;
+                document.getElementById('prix-hp-display').textContent = `${prixHP.toFixed(4)} €/kWh`;
+            }
+            document.getElementById('prix-abo-display').textContent = `${subscriptionPrice.toFixed(2)} €/mois`;
+
 
             if (periode === 'mois') { // Daily aggregation for the month
                 const dailyAggregates = {};
@@ -267,18 +289,29 @@
                     const consoHC = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
                     const consoHP = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
 
-                    const costHC = consoHC * prixHC;
-                    const costHP = consoHP * prixHP;
+                    let costHC = 0;
+                    let costHP = 0;
+
+                    if (subscriptionType === 'base') {
+                        costHP = (consoHC + consoHP) * prixBase;
+                    } else {
+                        costHC = consoHC * prixHC;
+                        costHP = consoHP * prixHP;
+                    }
+                    
+                    const costAbo = dailySubscriptionCost;
 
                     processedData.push({
                         label: new Date(date).toLocaleDateString('fr-FR', { day: '2-digit' }), // Day of month
                         coutHC: costHC,
                         coutHP: costHP,
-                        coutTotal: costHC + costHP,
+                        coutAbo: costAbo,
+                        coutTotal: costHC + costHP + costAbo,
                         date: new Date(date) // Add full date for proper sorting
                     });
                     totalCostHC += costHC;
                     totalCostHP += costHP;
+                    totalCostAbo += costAbo;
                 }
                 processedData.sort((a, b) => a.date - b.date); // Sort by date in chronological order
             } else { // periode === 'periode' (daily aggregation for custom range)
@@ -300,29 +333,41 @@
                     const consoHC = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
                     const consoHP = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
 
-                    const costHC = consoHC * prixHC;
-                    const costHP = consoHP * prixHP;
+                    let costHC = 0;
+                    let costHP = 0;
+
+                    if (subscriptionType === 'base') {
+                        costHP = (consoHC + consoHP) * prixBase;
+                    } else {
+                        costHC = consoHC * prixHC;
+                        costHP = consoHP * prixHP;
+                    }
+
+                    const costAbo = dailySubscriptionCost;
 
                     processedData.push({
                         label: new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
                         coutHC: costHC,
                         coutHP: costHP,
-                        coutTotal: costHC + costHP
+                        coutAbo: costAbo,
+                        coutTotal: costHC + costHP + costAbo
                     });
                     totalCostHC += costHC;
                     totalCostHP += costHP;
+                    totalCostAbo += costAbo;
                 }
                 processedData.sort((a, b) => new Date(a.label) - new Date(b.label));
             }
 
-            updateCharts(processedData, totalCostHC, totalCostHP);
-            updateStats(totalCostHC, totalCostHP, totalCostHC + totalCostHP, parseFloat(config?.budgetMensuel || 0));
+            updateCharts(processedData, totalCostHC, totalCostHP, totalCostAbo);
+            updateStats(totalCostHC, totalCostHP, totalCostAbo, totalCostHC + totalCostHP + totalCostAbo, parseFloat(config?.budgetMensuel || 0));
         }
 
-        function updateCharts(processedData, totalCostHC, totalCostHP) {
+        function updateCharts(processedData, totalCostHC, totalCostHP, totalCostAbo) {
             let labels = processedData.map(d => d.label);
             let coutHCData = processedData.map(d => d.coutHC);
             let coutHPData = processedData.map(d => d.coutHP);
+            let coutAboData = processedData.map(d => d.coutAbo);
             
             // Adapt labels for long periods (max 40 divisions)
             if (labels.length > 40) {
@@ -330,16 +375,19 @@
                 const adaptedLabels = [];
                 const adaptedHCData = [];
                 const adaptedHPData = [];
+                const adaptedAboData = [];
                 
                 for (let i = 0; i < labels.length; i += step) {
                     adaptedLabels.push(labels[i]);
                     adaptedHCData.push(coutHCData[i]);
                     adaptedHPData.push(coutHPData[i]);
+                    adaptedAboData.push(coutAboData[i]);
                 }
                 
                 labels = adaptedLabels;
                 coutHCData = adaptedHCData;
                 coutHPData = adaptedHPData;
+                coutAboData = adaptedAboData;
             }
 
             // Destroy existing charts if they exist
@@ -353,6 +401,11 @@
                 data: {
                     labels: labels,
                     datasets: [
+                        {
+                            label: 'Abonnement (€)',
+                            data: coutAboData,
+                            backgroundColor: '#a855f7', // purple-500
+                        },
                         {
                             label: 'Coût HC (€)',
                             data: coutHCData,
@@ -411,10 +464,10 @@
             hchpCostPieChart = new Chart(ctxPie, {
                 type: 'pie',
                 data: {
-                    labels: ['Heures Creuses', 'Heures Pleines'],
+                    labels: ['Abonnement', 'Heures Creuses', 'Heures Pleines'],
                     datasets: [{
-                        data: [totalCostHC, totalCostHP],
-                        backgroundColor: ['#3b82f6', '#f97316'], // blue-500, orange-500
+                        data: [totalCostAbo, totalCostHC, totalCostHP],
+                        backgroundColor: ['#a855f7', '#3b82f6', '#f97316'], // purple-500, blue-500, orange-500
                         hoverOffset: 4
                     }]
                 },
@@ -451,9 +504,10 @@
             });
         }
 
-        function updateStats(coutHC, coutHP, coutTotal, budgetMensuel) {
+        function updateStats(coutHC, coutHP, coutAbo, coutTotal, budgetMensuel) {
             document.getElementById('cout-hc').textContent = `${coutHC.toFixed(2)} €`;
             document.getElementById('cout-hp').textContent = `${coutHP.toFixed(2)} €`;
+            document.getElementById('cout-abo').textContent = `${coutAbo.toFixed(2)} €`;
             document.getElementById('cout-total').textContent = `${coutTotal.toFixed(2)} €`;
             document.getElementById('periode-display').textContent = `Du ${new Date(dateRange.start).toLocaleDateString('fr-FR')} au ${new Date(dateRange.end).toLocaleDateString('fr-FR')}`;
         }
@@ -532,6 +586,10 @@
             let totalCost = 0;
             const prixHC = parseFloat(config?.prixHC || 0.1821);
             const prixHP = parseFloat(config?.prixHP || 0.2460);
+            const prixBase = parseFloat(config?.prixBase || 0.2000);
+            const subscriptionType = config?.subscription_type || 'hchp';
+            const subscriptionPrice = parseFloat(config?.subscription_price || 0);
+            const dailySubscriptionCost = (subscriptionPrice * 12) / 365;
 
             console.log('Daily aggregates found:', Object.keys(dailyAggregates).length, 'days');
 
@@ -542,13 +600,18 @@
                 const consoHC = Math.max(0, parseFloat(last.hchc) - parseFloat(first.hchc));
                 const consoHP = Math.max(0, parseFloat(last.hchp) - parseFloat(first.hchp));
 
-                const costHC = consoHC * prixHC;
-                const costHP = consoHP * prixHP;
-                const dayCost = costHC + costHP;
+                let dayCost = 0;
+                if (subscriptionType === 'base') {
+                    dayCost = (consoHC + consoHP) * prixBase;
+                } else {
+                    dayCost = (consoHC * prixHC) + (consoHP * prixHP);
+                }
+                
+                dayCost += dailySubscriptionCost;
 
                 totalCost += dayCost;
                 
-                console.log(`Date ${date}: HC=${consoHC.toFixed(2)}kWh, HP=${consoHP.toFixed(2)}kWh, Cost=${dayCost.toFixed(2)}€`);
+                console.log(`Date ${date}: HC=${consoHC.toFixed(2)}kWh, HP=${consoHP.toFixed(2)}kWh, Abo=${dailySubscriptionCost.toFixed(2)}€, Cost=${dayCost.toFixed(2)}€`);
             }
 
             console.log('Total month cost:', totalCost.toFixed(2), '€');

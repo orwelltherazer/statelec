@@ -37,7 +37,8 @@ class SettingsController
         return [
             'page_title' => 'Paramètres',
             'currentPage' => 'parametres',
-            'settings' => $settings
+            'settings' => $settings,
+            'theme' => self::getCurrentTheme()
         ];
     }
 
@@ -59,6 +60,32 @@ class SettingsController
         } catch (PDOException $e) {
             // Log error, return empty array or handle gracefully
             return [];
+        }
+    }
+
+    /**
+     * Get current theme from settings
+     */
+    public static function getCurrentTheme(): string
+    {
+        try {
+            $pdo = Database::getInstance();
+            if (!$pdo) {
+                return 'HeadLight'; // Default theme
+            }
+
+            $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ?");
+            $stmt->execute(['app_theme']);
+            $result = $stmt->fetchColumn();
+
+            if ($result !== false) {
+                $theme = json_decode($result, true);
+                return $theme ?: 'HeadLight';
+            }
+
+            return 'HeadLight'; // Default theme
+        } catch (PDOException $e) {
+            return 'HeadLight'; // Default theme on error
         }
     }
 

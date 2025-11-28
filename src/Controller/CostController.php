@@ -26,14 +26,14 @@ class CostController
                 'currentPage' => 'cout',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
             ];
         }
 
         $data = $this->getCostData();
 
         // Fetch configuration settings
-        $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prixHC', 'prixHP', 'budgetMensuel')");
+        $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prixHC', 'prixHP', 'prix_hc', 'prix_hp', 'budgetMensuel', 'subscription_type', 'subscription_price', 'prixBase')");
         $rawSettings = $settingsStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
         // Decode JSON values
@@ -43,9 +43,12 @@ class CostController
         }
 
         $config = [
-            'prixHC' => isset($settings['prixHC']) ? (float)$settings['prixHC'] : 0.1821,
-            'prixHP' => isset($settings['prixHP']) ? (float)$settings['prixHP'] : 0.2460,
-            'budgetMensuel' => isset($settings['budgetMensuel']) ? (float)$settings['budgetMensuel'] : 50.0
+            'prixHC' => isset($settings['prixHC']) ? (float)$settings['prixHC'] : (isset($settings['prix_hc']) ? (float)$settings['prix_hc'] : 0.1821),
+            'prixHP' => isset($settings['prixHP']) ? (float)$settings['prixHP'] : (isset($settings['prix_hp']) ? (float)$settings['prix_hp'] : 0.2460),
+            'prixBase' => isset($settings['prixBase']) ? (float)$settings['prixBase'] : 0.2000,
+            'budgetMensuel' => isset($settings['budgetMensuel']) ? (float)$settings['budgetMensuel'] : 50.0,
+            'subscription_type' => isset($settings['subscription_type']) ? $settings['subscription_type'] : 'hchp',
+            'subscription_price' => isset($settings['subscription_price']) ? (float)$settings['subscription_price'] : 0.0
         ];
 
         return [
@@ -54,7 +57,8 @@ class CostController
             'costData' => $data['costData'],
             'totalCost' => $data['totalCost'],
             'averageDailyCost' => $data['averageDailyCost'],
-            'config' => $config
+            'config' => $config,
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ];
     }
 
@@ -73,11 +77,23 @@ class CostController
         }
 
         // Fetch prices from settings (or use defaults)
-        $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prix_hc', 'prix_hp')");
-        $settings = $settingsStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prixHC', 'prixHP', 'prix_hc', 'prix_hp', 'subscription_type', 'subscription_price', 'prixBase')");
+        $rawSettings = $settingsStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        
+        $settings = [];
+        foreach ($rawSettings as $key => $value) {
+            $settings[$key] = json_decode($value, true);
+        }
 
-        $prixHC = isset($settings['prix_hc']) ? (float)$settings['prix_hc'] : 0.1821;
-        $prixHP = isset($settings['prix_hp']) ? (float)$settings['prix_hp'] : 0.2460;
+        $prixHC = isset($settings['prixHC']) ? (float)$settings['prixHC'] : (isset($settings['prix_hc']) ? (float)$settings['prix_hc'] : 0.1821);
+        $prixHP = isset($settings['prixHP']) ? (float)$settings['prixHP'] : (isset($settings['prix_hp']) ? (float)$settings['prix_hp'] : 0.2460);
+        $prixBase = isset($settings['prixBase']) ? (float)$settings['prixBase'] : 0.2000;
+        
+        $subscriptionType = isset($settings['subscription_type']) ? $settings['subscription_type'] : 'hchp';
+        $subscriptionPrice = isset($settings['subscription_price']) ? (float)$settings['subscription_price'] : 0.0;
+        
+        // Calculate daily subscription cost (monthly * 12 / 365)
+        $dailySubscriptionCost = ($subscriptionPrice * 12) / 365;
 
         $dailyConsumption = [];
         foreach ($consumptionData as $record) {
@@ -96,7 +112,14 @@ class CostController
             $consoHC = $data['hchc_end'] - $data['hchc_start'];
             $consoHP = $data['hchp_end'] - $data['hchp_start'];
             $dailyTotalConso = $consoHC + $consoHP;
-            $dailyCost = ($consoHC * $prixHC) + ($consoHP * $prixHP);
+            
+            if ($subscriptionType === 'base') {
+                $dailyConsumptionCost = $dailyTotalConso * $prixBase;
+            } else {
+                $dailyConsumptionCost = ($consoHC * $prixHC) + ($consoHP * $prixHP);
+            }
+            
+            $dailyCost = $dailyConsumptionCost + $dailySubscriptionCost;
             $totalCost += $dailyCost;
 
             $costData[] = [

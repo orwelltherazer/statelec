@@ -3,9 +3,9 @@
 {% block title %}Dashboard - Statelec{% endblock %}
 
 {% block content %}
-<main class="p-6 sm:p-10 space-y-6">
+<main class="p-4 sm:p-6 space-y-6">
     {# Section des cartes de statistiques #}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {# Carte Consommation du jour #}
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div class="flex items-center justify-between mb-2">
@@ -27,14 +27,27 @@
         </div>
 
         {# Carte Coût estimé #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative group">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm text-gray-500 dark:text-gray-400">Coût estimé</span>
                 {# Icon: DollarSign #}
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
             </div>
             <div class="text-3xl font-bold">{{ coutEstime }} €</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Aujourd'hui</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h</div>
+
+            {# Tooltip #}
+            <div class="hidden group-hover:block absolute z-10 left-0 top-full mt-2 w-full bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl">
+                <div class="space-y-1">
+                    {% if coutBase != '0,00' %}
+                        <div class="flex justify-between"><span>Base :</span> <span>{{ coutBase }} €</span></div>
+                    {% else %}
+                        <div class="flex justify-between"><span>Heures creuses :</span> <span>{{ coutHC }} €</span></div>
+                        <div class="flex justify-between"><span>Heures pleines :</span> <span>{{ coutHP }} €</span></div>
+                    {% endif %}
+                    <div class="flex justify-between border-t border-gray-700 pt-1 mt-1"><span>Abonnement :</span> <span>{{ coutAbo }} €</span></div>
+                </div>
+            </div>
         </div>
 
         {# Carte Puissance maximale #}
@@ -47,6 +60,26 @@
             <div class="text-3xl font-bold">{{ puissanceMax }} W</div>
             <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h</div>
         </div>
+
+        {# Carte Index HC #}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Index HC</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="text-2xl font-bold text-blue-500">{{ currentData.hchc }} kWh</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h : {{ conso24hHC }} kWh</div>
+        </div>
+
+        {# Carte Index HP #}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Index HP</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="text-2xl font-bold text-orange-500">{{ currentData.hchp }} kWh</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h : {{ conso24hHP }} kWh</div>
+        </div>
     </div>
 
     {# Graphique #}
@@ -54,20 +87,6 @@
         <h2 class="text-lg font-semibold mb-4">Consommation cumulative sur 24h</h2>
         <div style="width: 100%; height: 250px;">
             <canvas id="consumptionChart"></canvas>
-        </div>
-    </div>
-
-    {# Cartes Index HC/HP #}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Index Heures Creuses</h3>
-            <div class="text-2xl font-bold text-blue-500">{{ currentData.hchc }} kWh</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Consommation HC (24h): {{ conso24hHC }} kWh</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Index Heures Pleines</h3>
-            <div class="text-2xl font-bold text-orange-500">{{ currentData.hchp }} kWh</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Consommation HP (24h): {{ conso24hHP }} kWh</div>
         </div>
     </div>
 </main>

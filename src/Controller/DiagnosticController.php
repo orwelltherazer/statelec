@@ -26,7 +26,7 @@ class DiagnosticController
                 'currentPage' => 'diagnostic',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
             ];
         }
 
@@ -37,7 +37,8 @@ class DiagnosticController
             'dbStatus' => $data['dbStatus'],
             'recordCount' => $data['recordCount'],
             'lastRecordTimestamp' => $data['lastRecordTimestamp'],
-            'moduleStatus' => $data['moduleStatus']
+            'moduleStatus' => $data['moduleStatus'],
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ];
     }
 

@@ -26,7 +26,7 @@ class HistoriqueController
                 'currentPage' => 'historique',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
             ];
         }
 
@@ -41,7 +41,8 @@ class HistoriqueController
             'config' => $this->getSettingsConfig(), // Pass settings for timezone etc.
             'globalDataRange' => $globalDataRange,
             'totalRecordCount' => $totalRecordCount,
-            'globalAveragePower' => $globalAveragePower
+            'globalAveragePower' => $globalAveragePower,
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ];
     }
 

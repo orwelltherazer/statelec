@@ -39,17 +39,77 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
 
-    {% include 'components/navigation.twig' %}
+    {% if 'Side' in theme %}
+        {% include 'components/nav_sidebar.twig' %}
+        
+        <div class="lg:pl-56 flex flex-col min-h-screen transition-all duration-300">
+            {# Mobile Header for Sidebar Layout #}
+            <div class="lg:hidden flex items-center justify-between h-16 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                    <button id="mobile-menu-btn" class="p-2 -ml-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <span class="font-bold text-lg">StatElec</span>
+                </div>
+            </div>
 
-    <div id="app-container">
-        {% block content %}{% endblock %}
-    </div>
+            <div id="app-container" class="flex-1">
+    {% else %}
+        {% include 'components/nav_header.twig' %}
+
+        <div id="app-container">
+    {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+    {% if 'Side' in theme %}
+        </div>
+    {% endif %}
 
     <link rel="stylesheet" href="{{ basePath }}css/modal.css">
     <script src="{{ basePath }}js/modal.js"></script>
     <script src="{{ basePath }}js/notifications.js"></script>
+    
+    <script>
+        // Theme handling
+        const currentTheme = "{{ theme }}";
+        const htmlElement = document.documentElement;
+        
+        if (currentTheme.includes('Dark')) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        // Mobile sidebar toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (mobileMenuBtn && sidebar && overlay) {
+            function toggleSidebar() {
+                const isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.remove('translate-x-0');
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
+
+            mobileMenuBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+            
+            // Initialize sidebar state for mobile (hidden by default)
+            if (window.innerWidth < 1024) { // lg breakpoint
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

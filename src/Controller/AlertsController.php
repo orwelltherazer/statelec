@@ -25,7 +25,7 @@ class AlertsController
                 'currentPage' => 'alertes',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => 'light'
+                'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
             ];
         }
 
@@ -44,7 +44,8 @@ class AlertsController
             'page_title' => 'Alertes',
             'currentPage' => 'alertes',
             'alerts' => $alerts,
-            'settings' => $settings
+            'settings' => $settings,
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
         ];
     }
 

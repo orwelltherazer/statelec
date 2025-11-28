@@ -3,35 +3,40 @@
 {% block title %}Paramètres - Statelec{% endblock %}
 
 {% block content %}
-<main class="p-6 sm:p-10 space-y-6">
+<main class="p-4 sm:p-6 space-y-6">
     <div class="space-y-6">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-6">Thème de l'interface</h2>
+            <form id="theme-settings-form" class="space-y-4">
+                <div>
+                    <label for="app_theme" class="block text-sm font-medium mb-2">Sélectionner un thème</label>
+                    <select
+                        id="app_theme"
+                        name="app_theme"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="HeadLight" {% if settings.app_theme == 'HeadLight' or settings.app_theme is not defined %}selected{% endif %}>Header - Mode clair</option>
+                        <option value="HeadDark" {% if settings.app_theme == 'HeadDark' %}selected{% endif %}>Header - Mode sombre</option>
+                        <option value="SideLight" {% if settings.app_theme == 'SideLight' %}selected{% endif %}>Sidebar - Mode clair</option>
+                        <option value="SideDark" {% if settings.app_theme == 'SideDark' %}selected{% endif %}>Sidebar - Mode sombre</option>
+                    </select>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                        Choisissez entre une navigation en en-tête (Header) ou latérale (Sidebar), en mode clair ou sombre.
+                    </p>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition font-medium"
+                >
+                    Enregistrer le thème
+                </button>
+            </form>
+        </div>
+
         <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-6">Configuration générale</h2>
             <form id="general-settings-form" class="space-y-4">
-                <div>
-                    <label for="prixHC" class="block text-sm font-medium mb-2">Prix kWh Heures Creuses (€)</label>
-                    <input
-                        type="number"
-                        step="0.0001"
-                        id="prixHC"
-                        name="prixHC"
-                        value="{{ settings.prixHC | default(0.1821) }}"
-                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    />
-                </div>
-
-                <div>
-                    <label for="prixHP" class="block text-sm font-medium mb-2">Prix kWh Heures Pleines (€)</label>
-                    <input
-                        type="number"
-                        step="0.0001"
-                        id="prixHP"
-                        name="prixHP"
-                        value="{{ settings.prixHP | default(0.2460) }}"
-                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    />
-                </div>
-
                 <div>
                     <label for="budgetMensuel" class="block text-sm font-medium mb-2">Budget mensuel (€)</label>
                     <input
@@ -48,6 +53,82 @@
                     class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition font-medium"
                 >
                     Enregistrer les paramètres généraux
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-6">Contrat & Abonnement</h2>
+            <form id="contract-settings-form" class="space-y-4">
+                <div>
+                    <label for="subscription_type" class="block text-sm font-medium mb-2">Type de contrat</label>
+                    <select
+                        id="subscription_type"
+                        name="subscription_type"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="hchp" {% if settings.subscription_type == 'hchp' or settings.subscription_type is not defined %}selected{% endif %}>Heures Pleines / Heures Creuses</option>
+                        <option value="base" {% if settings.subscription_type == 'base' %}selected{% endif %}>Base (Tarif unique)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="subscription_price" class="block text-sm font-medium mb-2">Prix de l'abonnement (mensuel €)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="subscription_price"
+                        name="subscription_price"
+                        value="{{ settings.subscription_price | default(0) }}"
+                        class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+
+                <div id="prices-hchp" class="space-y-4 {% if settings.subscription_type == 'base' %}hidden{% endif %}">
+                    <div>
+                        <label for="prixHC" class="block text-sm font-medium mb-2">Prix kWh Heures Creuses (€)</label>
+                        <input
+                            type="number"
+                            step="0.0001"
+                            id="prixHC"
+                            name="prixHC"
+                            value="{{ settings.prixHC | default(0.1821) }}"
+                            class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label for="prixHP" class="block text-sm font-medium mb-2">Prix kWh Heures Pleines (€)</label>
+                        <input
+                            type="number"
+                            step="0.0001"
+                            id="prixHP"
+                            name="prixHP"
+                            value="{{ settings.prixHP | default(0.2460) }}"
+                            class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                    </div>
+                </div>
+
+                <div id="prices-base" class="space-y-4 {% if settings.subscription_type != 'base' %}hidden{% endif %}">
+                    <div>
+                        <label for="prixBase" class="block text-sm font-medium mb-2">Prix kWh Base (€)</label>
+                        <input
+                            type="number"
+                            step="0.0001"
+                            id="prixBase"
+                            name="prixBase"
+                            value="{{ settings.prixBase | default(0.2000) }}"
+                            class="w-full px-4 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition font-medium"
+                >
+                    Enregistrer le contrat
                 </button>
             </form>
         </div>

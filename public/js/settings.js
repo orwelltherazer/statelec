@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Validation des données
     function validateSettings(data, formType) {
         const errors = [];
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-        
+
         if (formType === 'thingspeak') {
             if (data.apiUrl !== undefined && data.apiUrl) {
                 try {
@@ -58,26 +58,43 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Validation pour le contrat
+        if (formType === 'contract') {
+            if (data.subscription_price !== undefined && data.subscription_price < 0) {
+                errors.push('Le prix de l\'abonnement doit être positif');
+            }
+            if (data.prixBase !== undefined && (data.prixBase < 0 || data.prixBase > 2)) {
+                errors.push('Le prix du kWh (Base) doit être entre 0€ et 2€');
+            }
+            if (data.prixHC !== undefined && (data.prixHC < 0 || data.prixHC > 2)) {
+                errors.push('Le prix du kWh (HC) doit être entre 0€ et 2€');
+            }
+            if (data.prixHP !== undefined && (data.prixHP < 0 || data.prixHP > 2)) {
+                errors.push('Le prix du kWh (HP) doit être entre 0€ et 2€');
+            }
+        }
+
         return { errors, warnings };
     }
 
     // Fonction améliorée pour sauvegarder les paramètres
     async function saveSettings(formId) {
         console.log('saveSettings called with formId:', formId);
-        
+
         const form = document.getElementById(formId);
         if (!form) {
             console.error('Form not found:', formId);
             return;
         }
-        
+
         const formData = new FormData(form);
         const dataToSave = {};
         let formType = 'unknown';
         if (formId === 'general-settings-form') formType = 'general';
         if (formId === 'thingspeak-settings-form') formType = 'thingspeak';
         if (formId === 'alert-settings-form') formType = 'alerts';
-        
+        if (formId === 'contract-settings-form') formType = 'contract';
+
         console.log('Form type:', formType);
 
         // Récupérer et valider les données
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validation
         const validation = validateSettings(dataToSave, formType);
-        
+
         if (validation.errors.length > 0) {
             notificationService.error('Erreur de validation: ' + validation.errors.join(', '));
             return;
@@ -149,16 +166,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gérer les soumissions de formulaires
     const generalSettingsForm = document.getElementById('general-settings-form');
     if (generalSettingsForm) {
-        generalSettingsForm.addEventListener('submit', function(event) {
+        generalSettingsForm.addEventListener('submit', function (event) {
             event.preventDefault();
             console.log('General settings form submitted');
             saveSettings('general-settings-form');
         });
     }
-    
+
     const thingspeakSettingsForm = document.getElementById('thingspeak-settings-form');
     if (thingspeakSettingsForm) {
-        thingspeakSettingsForm.addEventListener('submit', function(event) {
+        thingspeakSettingsForm.addEventListener('submit', function (event) {
             event.preventDefault();
             console.log('ThingSpeak settings form submitted');
             saveSettings('thingspeak-settings-form');
@@ -167,10 +184,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const alertSettingsForm = document.getElementById('alert-settings-form');
     if (alertSettingsForm) {
-        alertSettingsForm.addEventListener('submit', function(event) {
+        alertSettingsForm.addEventListener('submit', function (event) {
             event.preventDefault();
             console.log('Alert settings form submitted');
             saveSettings('alert-settings-form');
+        });
+    }
+
+    const contractSettingsForm = document.getElementById('contract-settings-form');
+    if (contractSettingsForm) {
+        contractSettingsForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            console.log('Contract settings form submitted');
+            saveSettings('contract-settings-form');
+        });
+
+        const subscriptionTypeSelect = document.getElementById('subscription_type');
+        const pricesHchp = document.getElementById('prices-hchp');
+        const pricesBase = document.getElementById('prices-base');
+
+        if (subscriptionTypeSelect && pricesHchp && pricesBase) {
+            function toggleContractSettings() {
+                if (subscriptionTypeSelect.value === 'base') {
+                    pricesHchp.classList.add('hidden');
+                    pricesBase.classList.remove('hidden');
+                } else {
+                    pricesHchp.classList.remove('hidden');
+                    pricesBase.classList.add('hidden');
+                }
+            }
+
+            // Initial state
+            toggleContractSettings();
+
+            // Listen for changes
+            subscriptionTypeSelect.addEventListener('change', toggleContractSettings);
+        }
+    }
+
+    const themeSettingsForm = document.getElementById('theme-settings-form');
+    if (themeSettingsForm) {
+        themeSettingsForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            console.log('Theme settings form submitted');
+
+            const themeSelect = document.getElementById('app_theme');
+            const selectedTheme = themeSelect.value;
+
+            try {
+                const response = await fetch(`${basePath}api/settings/app_theme`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ value: selectedTheme }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('Theme saved:', result);
+
+                notificationService.success('Thème enregistré avec succès. Rechargement de la page...');
+
+                // Reload page after a short delay to apply the new theme
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error saving theme:', error);
+                notificationService.error('Erreur lors de l\'enregistrement du thème');
+            }
         });
     }
 
@@ -179,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gérer l'activation/désactivation de tous les champs d'alerte
     const emailAlertsCheckbox = document.getElementById('email_alerts');
     const alertSettingsContent = document.getElementById('alert-settings-content');
-    
+
     if (emailAlertsCheckbox && alertSettingsContent) {
         function toggleAlertSettings() {
             if (emailAlertsCheckbox.checked) {
@@ -188,10 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 alertSettingsContent.classList.add('opacity-50', 'pointer-events-none');
             }
         }
-        
+
         // Initialiser l'état
         toggleAlertSettings();
-        
+
         // Écouter les changements
         emailAlertsCheckbox.addEventListener('change', toggleAlertSettings);
     }
