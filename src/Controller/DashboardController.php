@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Statelec\Controller;
 
 use Statelec\Service\Database;
-use Statelec\Controller\SettingsController;
 use PDO;
+use DateTime;
+use DateTimeZone;
 
 class DashboardController
 {
@@ -21,147 +22,231 @@ class DashboardController
     {
         if (!$this->pdo) {
             return [
-                'page_title' => 'Tableau de bord',
+                'page_title' => 'Dashboard',
                 'currentPage' => 'dashboard',
                 'db_error' => true,
                 'basePath' => $_ENV['BASE_PATH'] ?? '/',
-                'theme' => SettingsController::getCurrentTheme()
+                'theme' => 'light'
             ];
         }
 
-        $config = $this->getSettingsConfig();
-        $data24h = $this->getLast24hData();
-        
-        // Calculs par défaut
-        $consoDuJour = 0; // Wh
-        $coutEstime = 0;
-        $puissanceMax = 0;
-        $conso24hHC = 0; // Wh
-        $conso24hHP = 0; // Wh
-        $chartData = [];
-        $currentData = ['hchc' => 0, 'hchp' => 0];
-        
-        $prixHC = (float)($config['prixHC'] ?? 0.1821);
-        $prixHP = (float)($config['prixHP'] ?? 0.2460);
-        $prixBase = (float)($config['prixBase'] ?? 0.2000);
-        $subType = $config['subscription_type'] ?? 'hchp';
-        $aboMensuel = (float)($config['subscription_price'] ?? 0);
-        $aboJour = ($aboMensuel * 12) / 365;
-        
-        $coutBaseVal = 0;
-        $coutHCVal = 0;
-        $coutHPVal = 0;
+        $data = $this->getDashboardData();
+        return array_merge([
+            'page_title' => 'Dashboard',
+            'currentPage' => 'dashboard',
+            'theme' => \Statelec\Controller\SettingsController::getCurrentTheme()
+        ], $data);
+    }
 
-        if (!empty($data24h)) {
-            $first = $data24h[0];
-            $last = end($data24h);
-            $currentData = $last;
+    private function getDashboardData(): array
+    {
+        if (!$this->pdo) {
+            return $this->getDefaultDashboardData();
+        }
+
+        try {
+            // Fetch consumption data for the last 48 hours to allow comparison
+            $stmt = $this->pdo->query("SELECT timestamp, papp, hchc, hchp, ptec FROM consumption_data WHERE timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 48 HOUR) ORDER BY timestamp ASC");
+            $historicalData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($historicalData)) {
+                return $this->getDefaultDashboardData();
+            }
+
+            // Get current data (latest record)
+            $currentData = end($historicalData);
+
+            // Initialize time variables
+            $now = new DateTime('now', new DateTimeZone($_ENV['TIMEZONE'] ?? 'Europe/Paris'));
+            $twentyFourHoursAgo = (clone $now)->modify('-24 hours');
+            $fortyEightHoursAgo = (clone $now)->modify('-48 hours');
+
+            // Filter data for the last 24 hours
+            $last24h = array_filter($historicalData, function ($d) use ($twentyFourHoursAgo) {
+                return new DateTime($d['timestamp']) >= $twentyFourHoursAgo;
+            });
+            $last24h = array_values($last24h); // Re-index array
+
+            // Filter data for yesterday (24-48h before)
+            $yesterday24h = array_filter($historicalData, function ($d) use ($twentyFourHoursAgo, $fortyEightHoursAgo) {
+                $timestamp = new DateTime($d['timestamp']);
+                return $timestamp >= $fortyEightHoursAgo && $timestamp < $twentyFourHoursAgo;
+            });
+            $yesterday24h = array_values($yesterday24h); // Re-index array
+
+            // Calculate consumption for last 24h
+            $conso24hHC = 0.0;
+            $conso24hHP = 0.0;
+            if (count($last24h) > 0) {
+                $firstData = $last24h[0];
+                $lastData = end($last24h);
+                $conso24hHC = round((float)$lastData['hchc'] - (float)$firstData['hchc'], 2);
+                $conso24hHP = round((float)$lastData['hchp'] - (float)$firstData['hchp'], 2);
+            }
+
+            // Calculate consumption for yesterday
+            $consoHierHC = 0.0;
+            $consoHierHP = 0.0;
+            if (count($yesterday24h) > 0) {
+                $firstYesterdayData = $yesterday24h[0];
+                $lastYesterdayData = end($yesterday24h);
+                $consoHierHC = round((float)$lastYesterdayData['hchc'] - (float)$firstYesterdayData['hchc'], 2);
+                $consoHierHP = round((float)$lastYesterdayData['hchp'] - (float)$firstYesterdayData['hchp'], 2);
+            }
+
+            $consoDuJour = round($conso24hHC + $conso24hHP, 2);
+            $consoHier = round($consoHierHC + $consoHierHP, 2);
             
-            // Consommation sur la période (différence d'index)
-            $conso24hHC = max(0, (float)$last['hchc'] - (float)$first['hchc']);
-            $conso24hHP = max(0, (float)$last['hchp'] - (float)$first['hchp']);
-            $consoDuJour = $conso24hHC + $conso24hHP;
+            // Fetch prices from settings
+            $settingsStmt = $this->pdo->query("SELECT `key`, value FROM settings WHERE `key` IN ('prixHC', 'prixHP', 'prix_hc', 'prix_hp', 'subscription_type', 'subscription_price', 'prixBase')");
+            $rawSettings = $settingsStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $settings = [];
+            foreach ($rawSettings as $key => $value) {
+                $settings[$key] = json_decode($value, true);
+            }
+
+            $prixHC = isset($settings['prixHC']) ? (float)$settings['prixHC'] : (isset($settings['prix_hc']) ? (float)$settings['prix_hc'] : 0.1821);
+            $prixHP = isset($settings['prixHP']) ? (float)$settings['prixHP'] : (isset($settings['prix_hp']) ? (float)$settings['prix_hp'] : 0.2460);
+            $prixBase = isset($settings['prixBase']) ? (float)$settings['prixBase'] : 0.2000;
             
-            // Calcul coût (conversion Wh -> kWh)
-            if ($subType === 'base') {
-                $coutBaseVal = ($consoDuJour / 1000) * $prixBase;
-                $coutEstime = $coutBaseVal + $aboJour;
+            $subscriptionType = isset($settings['subscription_type']) ? $settings['subscription_type'] : 'hchp';
+            $subscriptionPrice = isset($settings['subscription_price']) ? (float)$settings['subscription_price'] : 0.0;
+            $dailySubscriptionCost = ($subscriptionPrice * 12) / 365;
+
+            if ($subscriptionType === 'base') {
+                $coutBase = ($conso24hHP + $conso24hHC) * $prixBase;
+                $coutHC = 0;
+                $coutHP = 0;
+                $coutEstime = $coutBase;
             } else {
-                $coutHCVal = ($conso24hHC / 1000) * $prixHC;
-                $coutHPVal = ($conso24hHP / 1000) * $prixHP;
-                $coutEstime = $coutHCVal + $coutHPVal + $aboJour;
+                $coutHC = $conso24hHC * $prixHC;
+                $coutHP = $conso24hHP * $prixHP;
+                $coutBase = 0;
+                $coutEstime = $coutHC + $coutHP;
             }
             
-            // Puissance max et données graphique
-            $puissanceMax = 0;
+            $coutAbo = $dailySubscriptionCost;
+            $coutEstime += $coutAbo;
             
-            // Échantillonnage pour le graphique (max 100 points)
-            $totalPoints = count($data24h);
-            $step = max(1, floor($totalPoints / 100));
-            
-            foreach ($data24h as $i => $row) {
-                if ((int)$row['papp'] > $puissanceMax) {
-                    $puissanceMax = (int)$row['papp'];
+            $coutEstime = round($coutEstime, 2);
+            $coutHC = round($coutHC, 2);
+            $coutHP = round($coutHP, 2);
+            $coutBase = round($coutBase, 2);
+            $coutAbo = round($coutAbo, 2);
+
+            // Calculate variation vs yesterday
+            $variationText = 'Pas de données hier';
+            $variationColor = 'text-gray-500';
+            if ($consoHier > 0) {
+                $variation = (($consoDuJour - $consoHier) / $consoHier) * 100;
+                $variationVsHier = round($variation, 1);
+
+                if ($variation > 0) {
+                    $variationText = "+{$variationVsHier}% vs hier";
+                    $variationColor = 'text-red-500';
+                } elseif ($variation < 0) {
+                    $variationText = "{$variationVsHier}% vs hier";
+                    $variationColor = 'text-green-500';
+                } else {
+                    $variationText = '0% vs hier';
+                    $variationColor = 'text-gray-500';
                 }
-                
-                if ($i % $step === 0 || $i === $totalPoints - 1) {
+            }
+
+            // Calculate max power
+            $puissanceMax = 0;
+            if (count($last24h) > 0) {
+                $puissanceMax = max(array_map(function ($d) { return (int)$d['papp']; }, $last24h));
+            }
+
+            // Prepare chart data (sampled every 15 minutes)
+            $sampledData = [];
+            if (count($last24h) > 0) {
+                $lastSampleTime = null;
+                foreach ($last24h as $dataPoint) {
+                    $dataTime = new DateTime($dataPoint['timestamp']);
+                    if ($lastSampleTime === null || ($dataTime->getTimestamp() - $lastSampleTime->getTimestamp()) >= 15 * 60) {
+                        $sampledData[] = $dataPoint;
+                        $lastSampleTime = $dataTime;
+                    }
+                }
+
+                // Ensure the very last data point is included for chart completeness
+                $lastDataPoint = end($last24h);
+                if (!empty($lastDataPoint)) {
+                    $isLastPointInSampled = false;
+                    if (!empty($sampledData)) {
+                        $lastSampledPoint = end($sampledData);
+                        if ($lastSampledPoint['timestamp'] === $lastDataPoint['timestamp']) {
+                            $isLastPointInSampled = true;
+                        }
+                    }
+
+                    if (!$isLastPointInSampled) {
+                        $sampledData[] = $lastDataPoint;
+                    }
+                }
+            }
+
+            $chartData = [];
+            if (count($sampledData) > 0) {
+                $firstChartData = $sampledData[0];
+                $firstHC = (float)$firstChartData['hchc'];
+                $firstHP = (float)$firstChartData['hchp'];
+                $appTimezone = new DateTimeZone($_ENV['TIMEZONE'] ?? 'Europe/Paris');
+
+                foreach ($sampledData as $d) {
+                    $hcConsumption = round((float)$d['hchc'] - $firstHC, 2);
+                    $hpConsumption = round((float)$d['hchp'] - $firstHP, 2);
+
+                    $timestamp = new DateTime($d['timestamp']); // Automatically parsed as UTC
+                    $timestamp->setTimezone($appTimezone); // Convert to local timezone
+
                     $chartData[] = [
-                        'time' => (new \DateTime($row['timestamp']))->format('H:i'),
-                        'indexHc' => number_format(((float)$row['hchc'] - (float)$first['hchc']) / 1000, 3, '.', ''), // Delta en kWh
-                        'indexHp' => number_format(((float)$row['hchp'] - (float)$first['hchp']) / 1000, 3, '.', '')  // Delta en kWh
+                        'time' => $timestamp->format('H:i'),
+                        'indexHc' => $hcConsumption,
+                        'indexHp' => $hpConsumption
                     ];
                 }
             }
-        }
-        
-        // Variation (logique simplifiée pour l'instant)
-        $variationText = "";
-        $variationColor = "text-gray-500";
 
+            return [
+                'consoDuJour' => number_format($consoDuJour, 2, ',', ''),
+                'coutEstime' => number_format($coutEstime, 2, ',', ''),
+                'coutHC' => number_format($coutHC, 2, ',', ''),
+                'coutHP' => number_format($coutHP, 2, ',', ''),
+                'coutBase' => number_format($coutBase, 2, ',', ''),
+                'coutAbo' => number_format($coutAbo, 2, ',', ''),
+                'puissanceMax' => $puissanceMax,
+                'variationText' => $variationText,
+                'variationColor' => $variationColor,
+                'conso24hHC' => number_format($conso24hHC, 2, ',', ''),
+                'conso24hHP' => number_format($conso24hHP, 2, ',', ''),
+                'currentData' => [
+                    'hchc' => number_format((float)$currentData['hchc'], 1, ',', ''),
+                    'hchp' => number_format((float)$currentData['hchp'], 1, ',', '')
+                ],
+                'chartData' => $chartData
+            ];
+
+        } catch (Exception $e) {
+            error_log('Dashboard data error: ' . $e->getMessage());
+            return $this->getDefaultDashboardData();
+        }
+    }
+
+    private function getDefaultDashboardData(): array
+    {
         return [
-            'page_title' => 'Tableau de bord',
-            'currentPage' => 'dashboard',
-            'config' => $config,
-            'theme' => SettingsController::getCurrentTheme(),
-            
-            'consoDuJour' => number_format($consoDuJour / 1000, 2, ',', ' '), // kWh
-            'coutEstime' => number_format($coutEstime, 2, ',', ' '),
-            'puissanceMax' => $puissanceMax,
-            
-            'currentData' => [
-                'hchc' => number_format(((float)($currentData['hchc'] ?? 0)) / 1000, 1, ',', ' '),
-                'hchp' => number_format(((float)($currentData['hchp'] ?? 0)) / 1000, 1, ',', ' ')
-            ],
-            
-            'conso24hHC' => number_format($conso24hHC / 1000, 2, ',', ' '),
-            'conso24hHP' => number_format($conso24hHP / 1000, 2, ',', ' '),
-            
-            'chartData' => $chartData,
-            
-            'variationText' => $variationText,
-            'variationColor' => $variationColor,
-            
-            'coutBase' => number_format($coutBaseVal, 2, ',', ' '),
-            'coutHC' => number_format($coutHCVal, 2, ',', ' '),
-            'coutHP' => number_format($coutHPVal, 2, ',', ' '),
-            'coutAbo' => number_format($aboJour, 2, ',', ' ')
+            'consoDuJour' => '0,00',
+            'coutEstime' => '0,00',
+            'puissanceMax' => 0,
+            'variationText' => 'Pas de données',
+            'variationColor' => 'text-gray-500',
+            'conso24hHC' => '0,00',
+            'conso24hHP' => '0,00',
+            'currentData' => ['hchc' => '0,0', 'hchp' => '0,0'],
+            'chartData' => []
         ];
-    }
-
-    private function getLast24hData(): array
-    {
-        if (!$this->pdo) return [];
-        try {
-            // Get data from last 24h
-            $stmt = $this->pdo->query("
-                SELECT * FROM consumption_data 
-                WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR) 
-                ORDER BY timestamp ASC
-            ");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            return [];
-        }
-    }
-
-    private function getSettingsConfig(): array
-    {
-        if (!$this->pdo) {
-            return [];
-        }
-
-        try {
-            $stmt = $this->pdo->query("SELECT `key`, value FROM settings");
-            $rawSettings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $formattedSettings = [];
-            foreach ($rawSettings as $setting) {
-                $formattedSettings[$setting['key']] = json_decode($setting['value'], true);
-            }
-            return $formattedSettings;
-        } catch (\PDOException $e) {
-            error_log("Error fetching settings for Dashboard: " . $e->getMessage());
-            return [];
-        }
     }
 }

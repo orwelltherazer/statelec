@@ -1,0 +1,54 @@
+/* ============================================
+   SIDEBAR THEME - Custom Styles
+   Noto Sans Font
+   ============================================ */
+
+/* Import Noto Sans Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Apply Noto Sans font to body when Sidebar theme is active */
+body {
+    font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Optional: Adjust letter spacing for better readability */
+body {
+    letter-spacing: 0.01em;
+}
+
+/* Headings with Noto Sans */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 600;
+}
+
+/* Sidebar specific adjustments */
+aside {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+/* Navigation items */
+nav a,
+.nav-link {
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 500;
+}
+
+/* Buttons */
+button,
+.btn {
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 500;
+}
+
+/* Form elements */
+input,
+select,
+textarea {
+    font-family: 'Noto Sans', sans-serif;
+}

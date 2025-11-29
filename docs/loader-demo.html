@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démonstration des Loaders - Statelec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+    <link rel="stylesheet" href="../public/css/loader.css">
+    <style>
+        .demo-box {
+            min-height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                    ⚡ Démonstration des Loaders Statelec
+                </h1>
+                <button 
+                    id="theme-toggle" 
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                >
+                    🌓 Changer le thème
+                </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+                Testez les différents types de loaders disponibles dans l'application.
+            </p>
+        </div>
+
+        <!-- Loader 1: Spinner Classique -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                1. Loader Spinner (Classique)
+            </h2>
+            <div class="demo-box bg-gray-50 dark:bg-gray-700 rounded-lg p-8 flex flex-col items-center justify-center">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">
+                    Chargement des données<span class="loader-dots"></span>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Usage :</strong> Loader standard pour la plupart des cas d'utilisation.
+                    Simple, élégant et performant.
+                </p>
+            </div>
+        </div>
+
+        <!-- Loader 2: Électrique -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                2. Loader Électrique ⚡ (Thématique)
+            </h2>
+            <div class="demo-box bg-gray-50 dark:bg-gray-700 rounded-lg p-8 flex flex-col items-center justify-center">
+                <div class="loader-electric"></div>
+                <div class="loader-text">
+                    Chargement des graphiques<span class="loader-dots"></span>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Usage :</strong> Parfait pour l'application Statelec ! 
+                    Utilise une icône d'éclair avec effet de pulsation et cercle tournant.
+                    <strong>Recommandé pour les pages avec graphiques électriques.</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Loader 3: Barres -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                3. Loader Barres (Dynamique)
+            </h2>
+            <div class="demo-box bg-gray-50 dark:bg-gray-700 rounded-lg p-8 flex flex-col items-center justify-center">
+                <div class="loader-bars">
+                    <div class="loader-bar"></div>
+                    <div class="loader-bar"></div>
+                    <div class="loader-bar"></div>
+                    <div class="loader-bar"></div>
+                    <div class="loader-bar"></div>
+                </div>
+                <div class="loader-text">
+                    Traitement en cours<span class="loader-dots"></span>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Usage :</strong> Idéal pour les opérations longues ou le traitement de données.
+                    Animation de barres qui rebondissent pour un effet dynamique.
+                </p>
+            </div>
+        </div>
+
+        <!-- Loader 4: Chart Loader -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                4. Chart Loader (Pour graphiques)
+            </h2>
+            <div class="chart-loader">
+                <div class="loader-electric"></div>
+                <div class="loader-text">
+                    Chargement du graphique<span class="loader-dots"></span>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Usage :</strong> Loader spécifique pour les zones de graphiques.
+                    Prend toute la hauteur de la zone et s'adapte automatiquement.
+                    <strong>Utilisé dans la page historique.</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Démonstration interactive -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                5. Test Interactif
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <button 
+                    onclick="simulateLoading('spinner')" 
+                    class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                >
+                    Tester Spinner
+                </button>
+                <button 
+                    onclick="simulateLoading('electric')" 
+                    class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+                >
+                    Tester Électrique ⚡
+                </button>
+                <button 
+                    onclick="simulateLoading('bars')" 
+                    class="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
+                >
+                    Tester Barres
+                </button>
+                <button 
+                    onclick="showPageLoader()" 
+                    class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                >
+                    Tester Page Loader
+                </button>
+            </div>
+            
+            <div id="test-area" class="demo-box bg-gray-50 dark:bg-gray-700 rounded-lg p-8 flex items-center justify-center">
+                <p class="text-gray-500 dark:text-gray-400">
+                    Cliquez sur un bouton pour tester un loader
+                </p>
+            </div>
+        </div>
+
+        <!-- Code examples -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                📝 Exemples de code
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">HTML - Loader Électrique</h3>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>&lt;div class="chart-loader hidden"&gt;
+    &lt;div class="loader-electric"&gt;&lt;/div&gt;
+    &lt;div class="loader-text"&gt;
+        Chargement&lt;span class="loader-dots"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">JavaScript - Afficher/Masquer</h3>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>// Afficher
+document.getElementById('loader').classList.remove('hidden');
+
+// Masquer
+document.getElementById('loader').classList.add('hidden');</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../public/js/loader.js"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+        });
+
+        // Simulate loading
+        function simulateLoading(type) {
+            const testArea = document.getElementById('test-area');
+            testArea.innerHTML = '';
+            
+            let loaderHTML = '';
+            if (type === 'spinner') {
+                loaderHTML = `
+                    <div class="loader-spinner"></div>
+                    <div class="loader-text">Chargement<span class="loader-dots"></span></div>
+                `;
+            } else if (type === 'electric') {
+                loaderHTML = `
+                    <div class="loader-electric"></div>
+                    <div class="loader-text">Chargement électrique<span class="loader-dots"></span></div>
+                `;
+            } else if (type === 'bars') {
+                loaderHTML = `
+                    <div class="loader-bars">
+                        <div class="loader-bar"></div>
+                        <div class="loader-bar"></div>
+                        <div class="loader-bar"></div>
+                        <div class="loader-bar"></div>
+                        <div class="loader-bar"></div>
+                    </div>
+                    <div class="loader-text">Traitement<span class="loader-dots"></span></div>
+                `;
+            }
+            
+            testArea.innerHTML = loaderHTML;
+            
+            // Simulate completion after 3 seconds
+            setTimeout(() => {
+                testArea.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">✅</div>
+                        <p class="text-green-600 dark:text-green-400 font-semibold">Chargement terminé !</p>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    testArea.innerHTML = `
+                        <p class="text-gray-500 dark:text-gray-400">
+                            Cliquez sur un bouton pour tester un loader
+                        </p>
+                    `;
+                }, 2000);
+            }, 3000);
+        }
+
+        function showPageLoader() {
+            LoaderManager.showPageLoader('Chargement de la page complète', 'electric');
+            
+            setTimeout(() => {
+                LoaderManager.hidePageLoader();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

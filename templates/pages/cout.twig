@@ -4,10 +4,10 @@
 
 {% block content %}
 <main class="p-2 sm:p-3 space-y-3">
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-            <h2 class="text-xl font-semibold">Analyse des coûts</h2>
-            <div class="flex flex-col sm:flex-row gap-2 items-center">
+            <h1 class="text-2xl font-bold">Analyse des coûts</h1>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
                 <div class="flex gap-2">
                     <button
                         id="periode-mois"
@@ -19,6 +19,108 @@
                     <button
                         id="periode-periode"
                         class="px-4 py-2 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
+                        data-periode="periode"
+                    >
+                        Période
+                    </button>
+                </div>
+
+                <div id="month-navigation" class="flex items-center gap-3">
+                    <button
+                        id="prev-month"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <span id="selected-month-display" class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                        {# Month will be set by JS #}
+                    </span>
+
+                    <button
+                        id="next-month"
+                        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="date-range-selection" class="flex gap-2 items-center hidden">
+                    <input
+                        type="date"
+                        id="start-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                    <span class="text-gray-500">au</span>
+                    <input
+                        type="date"
+                        id="end-date"
+                        class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Abonnement</div>
+                <div id="cout-abo" class="text-3xl font-bold text-purple-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-abo-display"></div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Heures Creuses</div>
+                <div id="cout-hc" class="text-3xl font-bold text-blue-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-hc-display">0.00 €/kWh</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Heures Pleines</div>
+                <div id="cout-hp" class="text-3xl font-bold text-orange-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="prix-hp-display">0.00 €/kWh</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+                <div class="text-sm text-gray-500 mb-2">Coût Total</div>
+                <div id="cout-total" class="text-3xl font-bold text-green-500">0.00 €</div>
+                <div class="text-sm text-gray-500 mt-2" id="periode-display"></div>
+            </div>
+        </div>
+
+        <div id="loading-indicator" class="flex justify-center items-center h-64 hidden">
+            <div class="text-lg">Chargement des données...</div>
+        </div>
+
+        <div id="chart-section">
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Coûts par heure/jour</h2>
+                <div style="width: 100%; height: 400px;">
+                    <canvas id="costBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Répartition HC/HP</h2>
+                <div style="width: 100%; height: 300px;">
+                    <canvas id="hchpCostPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Suivi budgétaire</h2>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span>Budget mensuel</span>
+                        <span id="budget-mensuel" class="font-bold">0.00 €</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div
                             id="budget-progress"
                             class="h-full transition-all"
                             style="width: 0%;"
@@ -407,7 +509,15 @@
             document.getElementById('cout-hp').textContent = `${coutHP.toFixed(2)} €`;
             document.getElementById('cout-abo').textContent = `${coutAbo.toFixed(2)} €`;
             document.getElementById('cout-total').textContent = `${coutTotal.toFixed(2)} €`;
-            document.getElementById('periode-display').textContent = `Du ${new Date(dateRange.start).toLocaleDateString('fr-FR')} au ${new Date(dateRange.end).toLocaleDateString('fr-FR')}`;
+            
+            // Display full month period in month mode, actual data range in custom period mode
+            if (periode === 'mois') {
+                const firstDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+                const lastDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+                document.getElementById('periode-display').textContent = `Du ${firstDay.toLocaleDateString('fr-FR')} au ${lastDay.toLocaleDateString('fr-FR')}`;
+            } else {
+                document.getElementById('periode-display').textContent = `Du ${new Date(dateRange.start).toLocaleDateString('fr-FR')} au ${new Date(dateRange.end).toLocaleDateString('fr-FR')}`;
+            }
         }
 
         async function loadBudgetData() {

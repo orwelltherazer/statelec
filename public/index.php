@@ -27,6 +27,7 @@ use Statelec\Controller\AlertsController;
 use Statelec\Controller\AnalysisController;
 use Statelec\Controller\DiagnosticController;
 use Statelec\Controller\HistoriqueController;
+use Statelec\Controller\IndicateursController;
 use Statelec\Controller\ApiController;
 
 // Charger les variables d'environnement
@@ -144,6 +145,9 @@ if (strpos($requestUri, '/api/') === 0) {
     } elseif ($requestUri === '/api/diagnostic/fetch-historical' && $method === 'POST') {
         $controller = new DiagnosticController();
         $controller->fetchHistoricalData();
+    } elseif ($requestUri === '/api/indicateurs' && $method === 'GET') {
+        $controller = new IndicateursController();
+        $controller->getIndicateursData();
     } else {
         http_response_code(404);
         echo json_encode(['error' => 'Endpoint API non trouvé']);
@@ -174,6 +178,9 @@ switch ($requestUri) {
         break;
     case '/diagnostic':
         handlePageRoute($twig, DiagnosticController::class, 'showDiagnostic', 'pages/diagnostic.twig');
+        break;
+    case '/indicateurs':
+        handlePageRoute($twig, IndicateursController::class, 'showIndicateurs', 'pages/indicateurs.twig');
         break;
     // Ajoutez d'autres routes ici au fur et à mesure
     case '/error':

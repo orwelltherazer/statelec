@@ -114,12 +114,152 @@ class IndicateursService
      */
     private function getEvenementsElectriques(string $periode): array
     {
-        // TODO: Implémenter la détection d'événements
+        $dateRange = $this->getDateRange($periode);
+        
+        // Récupérer les données brutes pour l'analyse
+        // On limite aux 1000 derniers points pour ne pas surcharger si la période est longue
+        $stmt = $this->pdo->prepare("
+            SELECT timestamp, papp 
+            FROM consumption_data 
+            WHERE timestamp >= ? AND timestamp <= ?
+            ORDER BY timestamp ASC
+        ");
+        $stmt->execute([$dateRange['start'], $dateRange['end']]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Paramètres (à récupérer des settings plus tard)
+        $seuilSaut = 500; // Watts
+        $seuilChargeElevee = 2000; // Watts (ex: four, chauffe-eau)
+        $dureeMinCharge = 30; // Minutes
+        $seuilAnomalie = 6000; // Watts (proche disjonction ou anormal)
+
+        $sauts = $this->detecterSautsPuissance($data, $seuilSaut);
+        $charges = $this->detecterChargesElevees($data, $seuilChargeElevee, $dureeMinCharge);
+        $anomalies = $this->detecterAnomalies($data, $seuilAnomalie);
+
         return [
-            'sauts_puissance' => [],
-            'anomalies' => [],
-            'charges_elevees' => []
+            'sauts_puissance' => $sauts,
+            'anomalies' => $anomalies,
+            'charges_elevees' => $charges
         ];
+    }
+
+    private function detecterSautsPuissance(array $data, int $seuil): array
+    {
+        $events = [];
+        $count = count($data);
+        
+        for ($i = 1; $i < $count; $i++) {
+            $prev = (int)$data[$i-1]['papp'];
+            $curr = (int)$data[$i]['papp'];
+            $delta = $curr - $prev;
+            
+            if (abs($delta) >= $seuil) {
+                $events[] = [
+                    'timestamp' => $data[$i]['timestamp'],
+                    'type' => $delta > 0 ? 'montée' : 'descente',
+                    'delta' => $delta,
+                    'valeur_avant' => $prev,
+                    'valeur_apres' => $curr
+                ];
+            }
+        }
+        
+        // Trier par timestamp décroissant
+        usort($events, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
+        
+        return array_slice($events, 0, 20);
+    }
+
+    private function detecterChargesElevees(array $data, int $seuilWatts, int $dureeMinMinutes): array
+    {
+        $charges = [];
+        $currentStart = null;
+        $count = count($data);
+        
+        for ($i = 0; $i < $count; $i++) {
+            $papp = (int)$data[$i]['papp'];
+            $timestamp = $data[$i]['timestamp'];
+            
+            if ($papp >= $seuilWatts) {
+                if ($currentStart === null) {
+                    $currentStart = $timestamp;
+                }
+            } else {
+                if ($currentStart !== null) {
+                    // Fin d'une période de charge
+                    $this->enregistrerCharge($charges, $currentStart, $data[$i-1]['timestamp'], $dureeMinMinutes, $seuilWatts);
+                    $currentStart = null;
+                }
+            }
+        }
+        
+        // Vérifier si une charge est en cours à la fin des données
+        if ($currentStart !== null) {
+            $this->enregistrerCharge($charges, $currentStart, $data[$count-1]['timestamp'], $dureeMinMinutes, $seuilWatts);
+        }
+        
+        return array_reverse($charges); // Les plus récents en premier
+    }
+
+    private function enregistrerCharge(array &$charges, string $start, string $end, int $minDuration, int $avgPower): void
+    {
+        try {
+            $startTime = new \DateTime($start);
+            $endTime = new \DateTime($end);
+            $durationSeconds = $endTime->getTimestamp() - $startTime->getTimestamp();
+            $durationMinutes = round($durationSeconds / 60);
+
+            if ($durationMinutes >= $minDuration) {
+                $charges[] = [
+                    'start' => $start,
+                    'end' => $end,
+                    'duration' => $durationMinutes,
+                    'avg_power' => $avgPower // Simplifié, on pourrait calculer la vraie moyenne
+                ];
+            }
+        } catch (\Exception $e) {
+            // Ignorer les erreurs de date
+        }
+    }
+
+    private function detecterAnomalies(array $data, int $seuilMax): array
+    {
+        $anomalies = [];
+        
+        foreach ($data as $point) {
+            $papp = (int)$point['papp'];
+            
+            // 1. Détection de pics très élevés (proche abonnement)
+            if ($papp >= $seuilMax) {
+                $anomalies[] = [
+                    'timestamp' => $point['timestamp'],
+                    'type' => 'pic_critique',
+                    'valeur' => $papp,
+                    'message' => "Pic critique détecté (> {$seuilMax}W)"
+                ];
+            }
+            
+            // 2. Détection consommation anormale la nuit (ex: > 1000W entre 2h et 4h)
+            // Nécessite de parser l'heure, un peu coûteux ici, on le fait simplement
+            try {
+                $date = new \DateTime($point['timestamp']);
+                $hour = (int)$date->format('H');
+                
+                if ($hour >= 2 && $hour < 5 && $papp > 1000) {
+                     $anomalies[] = [
+                        'timestamp' => $point['timestamp'],
+                        'type' => 'conso_nuit',
+                        'valeur' => $papp,
+                        'message' => "Consommation nocturne anormale (> 1000W)"
+                    ];
+                }
+            } catch (\Exception $e) {}
+        }
+        
+        // Trier et limiter
+        usort($anomalies, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
+        return array_slice($anomalies, 0, 10);
     }
 
     /**

@@ -1,0 +1,61 @@
+/* ============================================
+   HEADER THEME - Custom Styles
+   Montserrat Font + Centered Menu
+   ============================================ */
+
+/* Import Montserrat Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+/* Apply Montserrat font to body when Header theme is active */
+body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Headings with Montserrat - Bold and impactful */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Header/Navigation specific */
+header,
+nav {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Navigation items */
+nav a,
+.nav-link {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* Buttons - Strong and clear */
+button,
+.btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* Form elements */
+input,
+select,
+textarea {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Stats and numbers - Use tabular figures for alignment */
+.text-3xl,
+.text-2xl,
+.font-bold {
+    font-variant-numeric: tabular-nums;
+}

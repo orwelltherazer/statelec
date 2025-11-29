@@ -5,7 +5,7 @@
 {% block content %}
 <main class="p-2 sm:p-3 space-y-3">
     <!-- En-tête avec sélecteur de période -->
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
                 <h1 class="text-2xl font-bold">Indicateurs Électriques</h1>
@@ -14,20 +14,17 @@
             <div class="flex gap-2">
                 <button
                     data-periode="jour"
-                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'jour' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
-                >
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'jour' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}">
                     Jour
                 </button>
                 <button
                     data-periode="semaine"
-                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'semaine' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
-                >
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'semaine' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}">
                     Semaine
                 </button>
                 <button
                     data-periode="mois"
-                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'mois' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}"
-                >
+                    class="periode-btn px-4 py-2 rounded-lg transition {% if periode == 'mois' %}bg-blue-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}">
                     Mois
                 </button>
             </div>
@@ -35,8 +32,9 @@
     </div>
 
     <!-- Section 1: Mesures électriques brutes -->
-    <section id="mesures-brutes">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">1. Mesures électriques brutes</h2>
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
+   <section id="mesures-brutes">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Mesures électriques brutes</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
             <!-- Puissance instantanée -->
@@ -151,10 +149,12 @@
             </div>
         </div>
     </section>
+        </div>
 
     <!-- Section 2: Stats temporelles -->
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
     <section id="stats-temporelles" class="mt-4">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">2. Statistiques temporelles</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Statistiques temporelles</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
             <!-- Consommation nocturne -->
@@ -205,10 +205,11 @@
             </div>
         </div>
     </section>
-
+</div>
     <!-- Section 3: Indicateurs de gaspillage -->
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
     <section id="gaspillage" class="mt-4">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">3. Indicateurs de gaspillage</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Indicateurs de gaspillage</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
             <!-- Veille globale -->
@@ -266,10 +267,11 @@
             </div>
         </div>
     </section>
-
+</div>
     <!-- Section 4: Coût -->
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
     <section id="cout" class="mt-4">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">4. Coût</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Coût</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
             <!-- Coût jour -->
@@ -328,6 +330,7 @@
             </div>
         </div>
     </section>
+    </div>
 </main>
 {% endblock %}
 

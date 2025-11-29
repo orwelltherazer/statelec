@@ -38,10 +38,35 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    
+    {# Load theme-specific CSS #}
+    {% if theme == 'AdmintySide' %}
+        <link rel="stylesheet" href="{{ basePath }}css/adminty-theme.css">
+    {% elseif 'Side' in theme %}
+        <link rel="stylesheet" href="{{ basePath }}css/sidebar-theme.css">
+    {% elseif 'Head' in theme %}
+        <link rel="stylesheet" href="{{ basePath }}css/header-theme.css">
+    {% endif %}
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="{% if theme == 'AdmintySide' %}adminty-page-bg{% else %}bg-gray-100 dark:bg-gray-900{% endif %} text-gray-900 dark:text-gray-100 transition-colors duration-200">
 
-    {% if 'Side' in theme %}
+    {% if theme == 'AdmintySide' %}
+        {% include 'components/nav_sidebar_adminty.twig' %}
+        
+        <div class="lg:pl-56 flex flex-col min-h-screen transition-all duration-300">
+            {# Mobile Header for Sidebar Layout #}
+            <div class="lg:hidden flex items-center justify-between h-16 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                    <button id="mobile-menu-btn" class="p-2 -ml-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <span class="font-bold text-lg">StatElec</span>
+                </div>
+            </div>
+
+            <div id="app-container" class="flex-1">
+    {% elseif 'Side' in theme %}
         {% include 'components/nav_sidebar.twig' %}
         
         <div class="lg:pl-56 flex flex-col min-h-screen transition-all duration-300">
@@ -68,8 +93,10 @@
     {% endif %}
 
     <link rel="stylesheet" href="{{ basePath }}css/modal.css">
+    <link rel="stylesheet" href="{{ basePath }}css/loader.css">
     <script src="{{ basePath }}js/modal.js"></script>
     <script src="{{ basePath }}js/notifications.js"></script>
+    <script src="{{ basePath }}js/loader.js"></script>
     
     <script>
         // Theme handling
