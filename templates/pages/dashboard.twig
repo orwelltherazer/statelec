@@ -13,19 +13,20 @@
     {# Section des cartes de statistiques #}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {# Carte Consommation du jour #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Consommation du jour</span>
-                {# Icon: Activity #}
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Consommation du jour</div>
+                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-full text-blue-600 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
             </div>
-            <div class="text-3xl font-bold">{{ consoDuJour }} kWh</div>
-            <div class="text-sm flex items-center mt-2 {{ variationColor }}">
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ consoDuJour }} kWh</div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                 {% if variationText is not empty %}
                     {% if variationText starts with '+' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 rotate-180"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="rotate-180"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
                     {% elseif variationText starts with '-' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
                     {% endif %}
                 {% endif %}
                 {{ variationText }}
@@ -33,17 +34,20 @@
         </div>
 
         {# Carte Coût estimé #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative group">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Coût estimé</span>
-                {# Icon: DollarSign #}
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500 group relative">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût estimé</div>
+                <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
             </div>
-            <div class="text-3xl font-bold">{{ coutEstime }} €</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ coutEstime }} €</div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>SUR 24H</span>
+            </div>
 
             {# Tooltip #}
-            <div class="hidden group-hover:block absolute z-10 left-0 top-full mt-2 w-full bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl">
+            <div class="hidden group-hover:block absolute z-10 left-0 top-full mt-2 w-full bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-xl">
                 <div class="space-y-1">
                     {% if coutBase != '0,00' %}
                         <div class="flex justify-between"><span>Base :</span> <span>{{ coutBase }} €</span></div>
@@ -57,34 +61,45 @@
         </div>
 
         {# Carte Puissance maximale #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Puissance maximale</span>
-                {# Icon: BarChart2 #}
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-purple-500">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Puissance maximale</div>
+                <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-full text-purple-600 dark:text-purple-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                </div>
             </div>
-            <div class="text-3xl font-bold">{{ puissanceMax }} W</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ puissanceMax }} W</div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>SUR 24H</span>
+            </div>
         </div>
 
         {# Carte Index HC #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Index HC</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Index HC</div>
+                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-full text-blue-600 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
             </div>
-            <div class="text-2xl font-bold text-blue-500">{{ currentData.hchc }} kWh</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h : {{ conso24hHC }} kWh</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ currentData.hchc }} kWh</div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>SUR 24H : {{ conso24hHC }} kWh</span>
+            </div>
         </div>
 
         {# Carte Index HP #}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Index HP</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Index HP</div>
+                <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
             </div>
-            <div class="text-2xl font-bold text-orange-500">{{ currentData.hchp }} kWh</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sur 24h : {{ conso24hHP }} kWh</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ currentData.hchp }} kWh</div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>SUR 24H : {{ conso24hHP }} kWh</span>
+            </div>
         </div>
     </div>
 
@@ -182,4 +197,3 @@
     });
 </script>
 {% endblock %}
-

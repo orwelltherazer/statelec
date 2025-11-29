@@ -1,0 +1,368 @@
+/* ============================================
+   DEFAULT THEME - Standard Styles
+   Rounded Corners - Shadows - Tailwind Look
+   ============================================ */
+
+/* Stat Cards - Rounded with Shadow */
+.card {
+    background: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* shadow-lg */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.dark .card {
+    background-color: #1f2937;
+    /* dark:bg-gray-800 */
+    color: white;
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 500;
+}
+
+.card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+/* Colors for Default Theme (using Tailwind colors) */
+.card.cyan {
+    background-color: #eff6ff;
+    /* bg-blue-50 */
+}
+
+.dark .card.cyan {
+    background-color: rgba(30, 58, 138, 0.2);
+    /* dark:bg-blue-900/20 */
+}
+
+.card.cyan .card-title,
+.card.cyan .card-value,
+.card.cyan .card-icon {
+    color: #2563eb;
+    /* text-blue-600 */
+}
+
+.dark .card.cyan .card-title,
+.dark .card.cyan .card-value,
+.dark .card.cyan .card-icon {
+    color: #60a5fa;
+    /* dark:text-blue-400 */
+}
+
+.card.blue {
+    background-color: #eff6ff;
+    /* bg-blue-50 */
+}
+
+.dark .card.blue {
+    background-color: rgba(30, 58, 138, 0.2);
+    /* dark:bg-blue-900/20 */
+}
+
+.card.blue .card-title,
+.card.blue .card-value,
+.card.blue .card-icon {
+    color: #2563eb;
+    /* text-blue-600 */
+}
+
+.dark .card.blue .card-title,
+.dark .card.blue .card-value,
+.dark .card.blue .card-icon {
+    color: #60a5fa;
+    /* dark:text-blue-400 */
+}
+
+.card.orange {
+    background-color: #fff7ed;
+    /* bg-orange-50 */
+}
+
+.dark .card.orange {
+    background-color: rgba(124, 45, 18, 0.2);
+    /* dark:bg-orange-900/20 */
+}
+
+.card.orange .card-title,
+.card.orange .card-value,
+.card.orange .card-icon {
+    color: #ea580c;
+    /* text-orange-600 */
+}
+
+.dark .card.orange .card-title,
+.dark .card.orange .card-value,
+.dark .card.orange .card-icon {
+    color: #fb923c;
+    /* dark:text-orange-400 */
+}
+
+.card.green {
+    background-color: #f0fdf4;
+    /* bg-green-50 */
+}
+
+.dark .card.green {
+    background-color: rgba(20, 83, 45, 0.2);
+    /* dark:bg-green-900/20 */
+}
+
+.card.green .card-title,
+.card.green .card-value,
+.card.green .card-icon {
+    color: #16a34a;
+    /* text-green-600 */
+}
+
+.dark .card.green .card-title,
+.dark .card.green .card-value,
+.dark .card.green .card-icon {
+    color: #4ade80;
+    /* dark:text-green-400 */
+}
+
+.card.purple {
+    background-color: #faf5ff;
+    /* bg-purple-50 */
+}
+
+.dark .card.purple {
+    background-color: rgba(88, 28, 135, 0.2);
+    /* dark:bg-purple-900/20 */
+}
+
+.card.purple .card-title,
+.card.purple .card-value,
+.card.purple .card-icon {
+    color: #9333ea;
+    /* text-purple-600 */
+}
+
+.dark .card.purple .card-title,
+.dark .card.purple .card-value,
+.dark .card.purple .card-icon {
+    color: #c084fc;
+    /* dark:text-purple-400 */
+}
+
+.card.pink {
+    background-color: #fdf2f8;
+    /* bg-pink-50 */
+}
+
+.dark .card.pink {
+    background-color: rgba(131, 24, 67, 0.2);
+    /* dark:bg-pink-900/20 */
+}
+
+.card.pink .card-title,
+.card.pink .card-value,
+.card.pink .card-icon {
+    color: #db2777;
+    /* text-pink-600 */
+}
+
+.dark .card.pink .card-title,
+.dark .card.pink .card-value,
+.dark .card.pink .card-icon {
+    color: #f472b6;
+    /* dark:text-pink-400 */
+}
+
+.card.red {
+    background-color: #fef2f2;
+    /* bg-red-50 */
+}
+
+.dark .card.red {
+    background-color: rgba(127, 29, 29, 0.2);
+    /* dark:bg-red-900/20 */
+}
+
+.card.red .card-title,
+.card.red .card-value,
+.card.red .card-icon {
+    color: #dc2626;
+    /* text-red-600 */
+}
+
+.dark .card.red .card-title,
+.dark .card.red .card-value,
+.dark .card.red .card-icon {
+    color: #f87171;
+    /* dark:text-red-400 */
+}
+
+/* Card Value */
+.card-value {
+    font-size: 1.5rem;
+    /* text-2xl */
+    font-weight: 700;
+    /* font-bold */
+}
+
+/* Card Footer - Hidden in default theme */
+.card-footer {
+    display: none;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    /* rounded-full */
+}
+
+.badge.orange {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.dark .badge.orange {
+    background-color: rgba(124, 45, 18, 0.2);
+    color: #fb923c;
+}
+
+.badge.green {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.dark .badge.green {
+    background-color: rgba(20, 83, 45, 0.2);
+    color: #4ade80;
+}
+
+/* Chart Card */
+.chart-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .chart-card {
+    background-color: #1f2937;
+    color: white;
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.chart-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #6b7280;
+    background-color: #f9fafb;
+}
+
+.dark .table th {
+    color: #9ca3af;
+    background-color: #374151;
+}
+
+.table td {
+    padding: 1rem 1.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: #111827;
+}
+
+.dark .table td {
+    color: #f3f4f6;
+}
+
+/* Progress Bar */
+.progress {
+    width: 100%;
+    height: 0.5rem;
+    /* h-2 */
+    background-color: #e5e7eb;
+    /* bg-gray-200 */
+    border-radius: 9999px;
+    /* rounded-full */
+    overflow: hidden;
+}
+
+.dark .progress {
+    background-color: #374151;
+    /* dark:bg-gray-700 */
+}
+
+.progress-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 9999px;
+}
+
+.progress-bar.orange {
+    background-color: #f97316;
+}
+
+.progress-bar.green {
+    background-color: #22c55e;
+}
+
+.progress-bar.blue {
+    background-color: #3b82f6;
+}
+
+.progress-bar.purple {
+    background-color: #a855f7;
+}

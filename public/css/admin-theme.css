@@ -1,0 +1,46 @@
+/* admin-theme.css - Surcharges pour le thème Admin */
+
+:root {
+    --admin-bg: #f4f5fa;
+}
+
+body {
+    background-color: var(--admin-bg);
+}
+
+/* 
+   Transformation automatique des cartes (identifiées par leur ombre et bordure gauche)
+   pour rétablir le style "Admin" avec bandeau en bas.
+*/
+.shadow.border-l-4 {
+    border-left-width: 0 !important;
+    border-bottom-width: 4px !important;
+    border-radius: 0 !important;
+    /* Style carré caractéristique du thème Admin */
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05) !important;
+    /* Ombre plus douce */
+    transition: all 0.3s ease;
+}
+
+.shadow.border-l-4:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Ajustement pour les conteneurs de graphiques (qui ont shadow-lg) */
+.shadow-lg {
+    border-radius: 0 !important;
+    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1) !important;
+}
+
+/* Ajustement pour les boutons */
+button {
+    border-radius: 0 !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+}

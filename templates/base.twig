@@ -41,18 +41,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     
     {# Load theme-specific CSS #}
-    {% if theme == 'AdmintySide' %}
-        <link rel="stylesheet" href="{{ basePath }}css/adminty-theme.css">
-    {% elseif 'Side' in theme %}
-        <link rel="stylesheet" href="{{ basePath }}css/sidebar-theme.css">
-    {% elseif 'Head' in theme %}
-        <link rel="stylesheet" href="{{ basePath }}css/header-theme.css">
+
+    {% if theme == 'AdminSide' %}
+        <link rel="stylesheet" href="{{ basePath }}css/admin-theme.css">
+    {% else %}
+        <link rel="stylesheet" href="{{ basePath }}css/default-theme.css">
+        {% if 'Side' in theme %}
+            <link rel="stylesheet" href="{{ basePath }}css/sidebar-theme.css">
+        {% elseif 'Head' in theme %}
+            <link rel="stylesheet" href="{{ basePath }}css/header-theme.css">
+        {% endif %}
     {% endif %}
 </head>
-<body class="{% if theme == 'AdmintySide' %}adminty-page-bg{% else %}bg-gray-100 dark:bg-gray-900{% endif %} text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="{% if theme == 'AdminSide' %}admin-page-bg{% else %}bg-gray-100 dark:bg-gray-900{% endif %} text-gray-900 dark:text-gray-100 transition-colors duration-200">
 
-    {% if theme == 'AdmintySide' %}
-        {% include 'components/nav_sidebar_adminty.twig' %}
+    {% if theme == 'AdminSide' %}
+        {% include 'components/nav_sidebar_admin.twig' %}
         
         <div class="lg:pl-56 flex flex-col min-h-screen transition-all duration-300">
             {# Mobile Header for Sidebar Layout #}

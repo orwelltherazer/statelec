@@ -36,153 +36,192 @@
    <section id="mesures-brutes">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Mesures électriques brutes</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <!-- Puissance instantanée -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                    <span class="text-sm font-medium">Puissance instantanée</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-cyan-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Puissance instantanée</div>
+                    <div class="p-2 bg-cyan-100 dark:bg-cyan-900 rounded-full text-cyan-600 dark:text-cyan-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
                 </div>
-                <div id="puissance-instantanee" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="puissance-instantanee" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.puissance_instantanee }} W
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Temps réel
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>TEMPS RÉEL</span>
                 </div>
             </div>
 
             <!-- Puissance max jour -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    <span class="text-sm font-medium">Puissance max (jour)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Puissance max (jour)</div>
+                    <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
                 </div>
-                <div id="puissance-max-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="puissance-max-jour" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.puissance_max.jour }} W
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>PIC JOURNALIER</span>
                 </div>
             </div>
 
             <!-- Puissance max semaine -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    <span class="text-sm font-medium">Puissance max (semaine)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Puissance max (semaine)</div>
+                    <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
                 </div>
-                <div id="puissance-max-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="puissance-max-semaine" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.puissance_max.semaine }} W
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>PIC HEBDOMADAIRE</span>
                 </div>
             </div>
 
             <!-- Puissance max mois -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    <span class="text-sm font-medium">Puissance max (mois)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Puissance max (mois)</div>
+                    <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
                 </div>
-                <div id="puissance-max-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="puissance-max-mois" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.puissance_max.mois }} W
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>PIC MENSUEL</span>
                 </div>
             </div>
         </div>
 
         <!-- Énergie consommée -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Énergie (jour)</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Énergie jour -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Énergie (jour)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="energie-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="energie-jour" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.energie_consommee.jour }} kWh
                 </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>CUMUL JOURNALIER</span>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Énergie (semaine)</span>
+            <!-- Énergie semaine -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Énergie (semaine)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="energie-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="energie-semaine" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.energie_consommee.semaine }} kWh
                 </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>CUMUL HEBDOMADAIRE</span>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Énergie (mois)</span>
+            <!-- Énergie mois -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Énergie (mois)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="energie-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="energie-mois" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.mesures_brutes.energie_consommee.mois }} kWh
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>CUMUL MENSUEL</span>
                 </div>
             </div>
         </div>
 
         <!-- Courbe temporelle -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Courbe de puissance</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Courbe de puissance</h3>
             <div style="width: 100%; height: 300px;">
                 <canvas id="courbeTemporelleChart"></canvas>
             </div>
         </div>
     </section>
-        </div>
+    </div>
 
     <!-- Section 2: Stats temporelles -->
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-    <section id="stats-temporelles" class="mt-4">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6 mt-6">
+    <section id="stats-temporelles">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Statistiques temporelles</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Consommation nocturne -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Consommation nocturne (00h-06h)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-purple-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Consommation nocturne (00h-06h)</div>
+                    <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-full text-purple-600 dark:text-purple-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div id="conso-nocturne" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="conso-nocturne" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.stats_temporelles.conso_nocturne }} W
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Moyenne sur la période
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>MOYENNE SUR LA PÉRIODE</span>
                 </div>
             </div>
 
             <!-- Périodes de pointe -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                        <polyline points="17 6 23 6 23 12"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Heures de pointe</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-pink-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Heures de pointe</div>
+                    <div class="p-2 bg-pink-100 dark:bg-pink-900 rounded-full text-pink-600 dark:text-pink-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="periodes-pointe" class="text-2xl font-bold text-gray-900 dark:text-white">
+                <div id="periodes-pointe" class="text-xl font-bold text-gray-900 dark:text-white">
                     {% if indicateurs.stats_temporelles.periodes_pointe.pointe is not empty %}
                         {% for heure in indicateurs.stats_temporelles.periodes_pointe.pointe %}
                             {{ heure }}h{% if not loop.last %}, {% endif %}
@@ -191,141 +230,169 @@
                         N/A
                     {% endif %}
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Plages horaires avec consommation élevée
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>PLAGES À FORTE CONSO</span>
                 </div>
             </div>
         </div>
 
         <!-- Profil journalier -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Profil moyen journalier</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Profil moyen journalier</h3>
             <div style="width: 100%; height: 300px;">
                 <canvas id="profilJournalierChart"></canvas>
             </div>
         </div>
     </section>
-</div>
+    </div>
+
     <!-- Section 3: Indicateurs de gaspillage -->
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-    <section id="gaspillage" class="mt-4">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6 mt-6">
+    <section id="gaspillage">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Indicateurs de gaspillage</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Veille globale -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <span class="text-sm font-medium">Veille globale</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Veille globale</div>
+                    <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
                 </div>
-                <div id="veille-globale" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="veille-globale" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.gaspillage.veille_globale }} W
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Consommation de fond permanente
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>CONSO DE FOND</span>
                 </div>
             </div>
 
             <!-- Base nocturne -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Base nocturne (02h-05h)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-purple-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Base nocturne (02h-05h)</div>
+                    <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-full text-purple-600 dark:text-purple-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div id="base-nocturne" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="base-nocturne" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.gaspillage.base_nocturne }} W
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Équipements permanents
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>ÉQUIPEMENTS PERMANENTS</span>
                 </div>
             </div>
 
             <!-- Écart week-end -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Écart semaine/week-end</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-cyan-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Écart semaine/week-end</div>
+                    <div class="p-2 bg-cyan-100 dark:bg-cyan-900 rounded-full text-cyan-600 dark:text-cyan-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="ecart-weekend" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="ecart-weekend" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {% if indicateurs.gaspillage.ecart_weekend.ecart_pourcent is not null %}
                         {{ indicateurs.gaspillage.ecart_weekend.ecart_pourcent }}%
                     {% else %}
-                        <span class="text-gray-400 text-2xl">N/A</span>
+                        N/A
                     {% endif %}
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Variation de consommation
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>VARIATION DE CONSO</span>
                 </div>
             </div>
         </div>
     </section>
-</div>
+    </div>
+
     <!-- Section 4: Coût -->
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-    <section id="cout" class="mt-4">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6 mt-6">
+    <section id="cout">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Coût</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <!-- Coût jour -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Coût (jour)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût (jour)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div id="cout-jour" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="cout-jour" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.cout.couts.jour }}€
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>ESTIMATION JOURNALIÈRE</span>
                 </div>
             </div>
 
             <!-- Coût semaine -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Coût (semaine)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût (semaine)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div id="cout-semaine" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="cout-semaine" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.cout.couts.semaine }}€
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>ESTIMATION HEBDOMADAIRE</span>
                 </div>
             </div>
 
             <!-- Coût mois -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Coût (mois)</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût (mois)</div>
+                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div id="cout-mois" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="cout-mois" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.cout.couts.mois }}€
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>ESTIMATION MENSUELLE</span>
                 </div>
             </div>
 
             <!-- Coût projeté -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
-                <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                    <span class="text-sm font-medium">Projection fin de mois</span>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Projection fin de mois</div>
+                    <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
                 </div>
-                <div id="cout-projete" class="text-3xl font-bold text-gray-900 dark:text-white">
+                <div id="cout-projete" class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ indicateurs.cout.cout_projete }}€
+                </div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>PRÉVISION</span>
                 </div>
             </div>
         </div>

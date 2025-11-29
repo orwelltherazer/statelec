@@ -65,29 +65,49 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <div class="text-sm text-gray-500 mb-2">Coût Abonnement</div>
-                <div id="cout-abo" class="text-3xl font-bold text-purple-500">0.00 €</div>
-                <div class="text-sm text-gray-500 mt-2" id="prix-abo-display"></div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <!-- Coût Abonnement -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-purple-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût Abonnement</div>
+                </div>
+                <div id="cout-abo" class="text-2xl font-bold text-gray-900 dark:text-white">0.00 €</div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span id="prix-abo-display"></span>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <div class="text-sm text-gray-500 mb-2">Coût Heures Creuses</div>
-                <div id="cout-hc" class="text-3xl font-bold text-blue-500">0.00 €</div>
-                <div class="text-sm text-gray-500 mt-2" id="prix-hc-display">0.00 €/kWh</div>
+            <!-- Coût Heures Creuses -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-blue-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût Heures Creuses</div>
+                </div>
+                <div id="cout-hc" class="text-2xl font-bold text-gray-900 dark:text-white">0.00 €</div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span id="prix-hc-display">0.00 €/kWh</span>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <div class="text-sm text-gray-500 mb-2">Coût Heures Pleines</div>
-                <div id="cout-hp" class="text-3xl font-bold text-orange-500">0.00 €</div>
-                <div class="text-sm text-gray-500 mt-2" id="prix-hp-display">0.00 €/kWh</div>
+            <!-- Coût Heures Pleines -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-orange-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût Heures Pleines</div>
+                </div>
+                <div id="cout-hp" class="text-2xl font-bold text-gray-900 dark:text-white">0.00 €</div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span id="prix-hp-display">0.00 €/kWh</span>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <div class="text-sm text-gray-500 mb-2">Coût Total</div>
-                <div id="cout-total" class="text-3xl font-bold text-green-500">0.00 €</div>
-                <div class="text-sm text-gray-500 mt-2" id="periode-display"></div>
+            <!-- Coût Total -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Coût Total</div>
+                </div>
+                <div id="cout-total" class="text-2xl font-bold text-gray-900 dark:text-white">0.00 €</div>
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span id="periode-display"></span>
+                </div>
             </div>
         </div>
 
@@ -95,25 +115,25 @@
             <div class="text-lg">Chargement des données...</div>
         </div>
 
-        <div id="chart-section">
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold mb-4">Coûts par heure/jour</h2>
+        <div id="chart-section" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">Coûts par heure/jour</h3>
                 <div style="width: 100%; height: 400px;">
                     <canvas id="costBarChart"></canvas>
                 </div>
             </div>
 
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold mb-4">Répartition HC/HP</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">Répartition HC/HP</h3>
                 <div style="width: 100%; height: 300px;">
                     <canvas id="hchpCostPieChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Suivi budgétaire</h2>
-            <div class="space-y-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">Suivi budgétaire</h3>
+            <div class="p-4 space-y-4">
                 <div>
                     <div class="flex justify-between mb-2">
                         <span>Budget mensuel</span>
