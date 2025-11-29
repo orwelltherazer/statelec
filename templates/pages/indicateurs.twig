@@ -3,10 +3,10 @@
 {% block title %}Indicateurs Électriques - Statelec{% endblock %}
 
 {% block content %}
-<main class="p-4 sm:p-6 space-y-6">
+<main class="p-2 sm:p-3 space-y-3">
     <!-- En-tête avec sélecteur de période -->
-    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
                 <h1 class="text-2xl font-bold">Indicateurs Électriques</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mesures fiables basées sur les données brutes du capteur</p>
@@ -36,11 +36,11 @@
 
     <!-- Section 1: Mesures électriques brutes -->
     <section id="mesures-brutes">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1. Mesures électriques brutes</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">1. Mesures électriques brutes</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
             <!-- Puissance instantanée -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Puissance max jour -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
@@ -71,7 +71,7 @@
             </div>
 
             <!-- Puissance max semaine -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
@@ -86,7 +86,7 @@
             </div>
 
             <!-- Puissance max mois -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
@@ -102,8 +102,8 @@
         </div>
 
         <!-- Énergie consommée -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -116,7 +116,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -129,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -144,8 +144,8 @@
         </div>
 
         <!-- Courbe temporelle -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Courbe de puissance</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Courbe de puissance</h3>
             <div style="width: 100%; height: 300px;">
                 <canvas id="courbeTemporelleChart"></canvas>
             </div>
@@ -153,12 +153,12 @@
     </section>
 
     <!-- Section 2: Stats temporelles -->
-    <section id="stats-temporelles" class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2. Statistiques temporelles</h2>
+    <section id="stats-temporelles" class="mt-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">2. Statistiques temporelles</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
             <!-- Consommation nocturne -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -174,7 +174,7 @@
             </div>
 
             <!-- Périodes de pointe -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
@@ -198,53 +198,21 @@
         </div>
 
         <!-- Profil journalier -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profil moyen journalier</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Profil moyen journalier</h3>
             <div style="width: 100%; height: 300px;">
                 <canvas id="profilJournalierChart"></canvas>
             </div>
         </div>
     </section>
 
-    <!-- Section 3: Événements électriques -->
-    <section id="evenements" class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3. Détection d'événements électriques vérifiables</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Basés sur des variations franches du signal, pas des appareils supposés</p>
+    <!-- Section 3: Indicateurs de gaspillage -->
+    <section id="gaspillage" class="mt-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">3. Indicateurs de gaspillage</h2>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-gray-400">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <p class="text-lg font-medium mb-2">Détection d'événements en cours de développement</p>
-                <p class="text-sm">Les fonctionnalités suivantes seront bientôt disponibles :</p>
-                <ul class="text-sm mt-4 space-y-2 max-w-md mx-auto text-left">
-                    <li class="flex items-start gap-2">
-                        <span class="text-blue-500 mt-1">•</span>
-                        <span><strong>Sauts de puissance</strong> : Détection des montées/descentes > X W</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="text-blue-500 mt-1">•</span>
-                        <span><strong>Anomalies de charge</strong> : Pics anormaux par rapport aux moyennes historiques</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="text-blue-500 mt-1">•</span>
-                        <span><strong>Consommation continue élevée</strong> : Plateau > seuil paramétré</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section 4: Gaspillage -->
-    <section id="gaspillage" class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">4. Indicateurs de gaspillage</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
             <!-- Veille globale -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -262,7 +230,7 @@
             </div>
 
             <!-- Base nocturne -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -278,7 +246,7 @@
             </div>
 
             <!-- Écart week-end -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -299,13 +267,13 @@
         </div>
     </section>
 
-    <!-- Section 5: Coût -->
-    <section id="cout" class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">5. Coût</h2>
+    <!-- Section 4: Coût -->
+    <section id="cout" class="mt-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">4. Coût</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
             <!-- Coût jour -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -319,7 +287,7 @@
             </div>
 
             <!-- Coût semaine -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -333,7 +301,7 @@
             </div>
 
             <!-- Coût mois -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -347,7 +315,7 @@
             </div>
 
             <!-- Coût projeté -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
                 <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -465,7 +433,27 @@
                         y: { beginAtZero: true, grid: { color: theme === 'dark' ? '#374151' : '#e5e7eb' }, ticks: { color: theme === 'dark' ? '#9ca3af' : '#6b7280' } }
                     },
                     plugins: {
-                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } }
+                        legend: { labels: { color: theme === 'dark' ? '#e5e7eb' : '#374151' } },
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'x',
+                                threshold: 5
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                    speed: 0.1
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'x'
+                            },
+                            limits: {
+                                x: {min: 'original', max: 'original'}
+                            }
+                        }
                     }
                 }
             });

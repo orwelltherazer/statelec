@@ -3,46 +3,45 @@
 {% block title %}Analyse - Statelec{% endblock %}
 
 {% block content %}
-<main class="p-4 sm:p-6 space-y-6">
-    <div class="space-y-6">
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<main class="p-2 sm:p-3 space-y-3">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <h2 class="text-xl font-semibold">Analyse de consommation</h2>
-                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <div class="flex flex-col sm:flex-row gap-2 items-center">
                     <div class="flex gap-2">
                         <button
                             id="periode-mois"
-                            class="px-4 py-2 rounded-lg transition bg-blue-500 text-white"
+                            class="px-3 py-1.5 rounded-lg transition bg-blue-500 text-white"
                             data-periode="mois"
                         >
                             Mois
                         </button>
                         <button
                             id="periode-periode"
-                            class="px-4 py-2 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
+                            class="px-3 py-1.5 rounded-lg transition {% if theme == 'dark' %}bg-gray-700 text-gray-300{% else %}bg-gray-100 text-gray-700{% endif %}"
                             data-periode="periode"
                         >
                             Période
                         </button>
                     </div>
 
-                    <div id="month-navigation" class="flex items-center gap-3">
+                    <div id="month-navigation" class="flex items-center gap-2">
                         <button
                             id="prev-month"
-                            class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                            class="p-1.5 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                         </button>
 
-                        <span id="selected-month-display" class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                        <span id="selected-month-display" class="px-3 py-1.5 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
                             {# Month will be set by JS #}
                         </span>
 
                         <button
                             id="next-month"
-                            class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+                            class="p-1.5 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
@@ -54,20 +53,20 @@
                         <input
                             type="date"
                             id="start-date"
-                            class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            class="px-2 py-1.5 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         />
                         <span class="text-gray-500">au</span>
                         <input
                             type="date"
                             id="end-date"
-                            class="px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            class="px-2 py-1.5 rounded-lg border bg-white border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         />
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-3">
+                <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                         <span class="text-sm">Puissance moyenne</span>
@@ -75,7 +74,7 @@
                     <div id="avg-power" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0 W</div>
                 </div>
 
-                <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                     <div class="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                         <span class="text-sm">Puissance P90</span>
@@ -83,7 +82,7 @@
                     <div id="max-power" class="text-2xl font-bold text-orange-600 dark:text-orange-400">0 W</div>
                 </div>
 
-                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <div class="flex items-center gap-2 text-green-600 dark:text-green-400 mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         <span class="text-sm">Consommation totale</span>
@@ -91,7 +90,7 @@
                     <div id="total-consumption" class="text-2xl font-bold text-green-600 dark:text-green-400">0 kWh</div>
                 </div>
 
-                <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div class="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                     <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                         <span class="text-sm">Points analysés</span>
@@ -101,8 +100,8 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Profil de consommation horaire</h2>
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+            <h2 class="text-xl font-semibold mb-3">Profil de consommation horaire</h2>
             <div class="text-sm text-gray-500 mb-2">
                 Moyenne : puissance moyenne | P90 : puissance dépassée seulement 10% du temps (plus représentative que le max)
             </div>
@@ -111,9 +110,9 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     Périodes de pointe
                 </h3>
@@ -123,8 +122,8 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     Périodes creuses
                 </h3>
@@ -135,10 +134,10 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Tendances</h2>
-            <div class="space-y-4">
-                <div id="trend-variation" class="flex items-center justify-between p-4 rounded-lg">
+        <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg p-3">
+            <h2 class="text-xl font-semibold mb-3">Tendances</h2>
+            <div class="space-y-3">
+                <div id="trend-variation" class="flex items-center justify-between p-3 rounded-lg">
                     <div>
                         <div class="font-semibold flex items-center gap-2">
                             <span id="trend-icon"></span>
@@ -148,7 +147,7 @@
                     </div>
                 </div>
 
-                <div id="optimisation-hc" class="flex items-center justify-between p-4 rounded-lg">
+                <div id="optimisation-hc" class="flex items-center justify-between p-3 rounded-lg">
                     <div>
                         <div class="font-semibold flex items-center gap-2">
                             <span id="optimisation-icon"></span>
@@ -159,7 +158,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </main>
 {% endblock %}
 
